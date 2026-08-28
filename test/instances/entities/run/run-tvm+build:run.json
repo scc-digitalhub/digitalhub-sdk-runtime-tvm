@@ -1,0 +1,61 @@
+{
+  "id": "4c8e1a6b-7d9f-40c4-2e5a-1b3d9f0c6e76",
+  "key": "store://demo-etl/run/tvm+build:run/4c8e1a6b-7d9f-40c4-2e5a-1b3d9f0c6e76",
+  "kind": "tvm+build:run",
+  "metadata": {
+    "name": "4c8e1a6b-7d9f-40c4-2e5a-1b3d9f0c6e76",
+    "project": "demo-etl",
+    "created_by": "digitalhubdev",
+    "updated_by": "digitalhubdev",
+    "created": "2025-01-15T10:20:00.000Z",
+    "updated": "2025-01-15T10:20:00.000Z"
+  },
+  "name": "4c8e1a6b-7d9f-40c4-2e5a-1b3d9f0c6e76",
+  "project": "demo-etl",
+  "spec": {
+    "task": "tvm+build://demo-etl/1f5b8c3d-4a6e-47f1-9b2c-8d0e6a7f9b21",
+    "function": "tvm://demo-etl/func-tvm-git:7b5e0d4a-5e20-4f3e-8d5a-0e1c2f6d7a81",
+    "workflow": "workflow://demo-etl/mobilenet-pipeline:1",
+    "volumes": [
+      {
+        "volume_type": "empty_dir",
+        "name": "volume1",
+        "mount_path": "/volume1"
+      }
+    ],
+    "resources": {
+      "cpu": "1",
+      "mem": "1Gi",
+      "disk": "1Gi"
+    },
+    "envs": [
+      {
+        "name": "TVM_LOG_LEVEL",
+        "value": "INFO"
+      }
+    ],
+    "secrets": [
+      "model-registry"
+    ],
+    "profile": "1xa100",
+    "model": "store://demo-etl/model/mobilenet:5ab8f5b1-5f0c-4f5b-a6be-1be98db63c31",
+    "inputs": {
+      "input0": "store://demo-etl/dataitem/input:1"
+    },
+    "format": "onnx",
+    "ir_model": "store://demo-etl/model/mobilenet-relax:6c8b8bf5-1b63-46de-9e63-bdfc1b9c9d2f",
+    "so_model": "store://demo-etl/model/mobilenet-so:3c90b7c7-9f8d-40ab-9e94-6f8e5c6d2a10",
+    "image": "tvm:0.15",
+    "simplify": true,
+    "target_opset": 17,
+    "opset_override": 17,
+    "strict_shape_inference": true,
+    "data_prop": true,
+    "keep_params_in_input": false,
+    "sanitize_input_names": true
+  },
+  "status": {
+    "state": "READY"
+  },
+  "user": "digitalhubdev"
+}

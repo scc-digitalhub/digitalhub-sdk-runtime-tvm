@@ -1,0 +1,51 @@
+{
+  "id": "3b7d0f5a-6c8e-49b3-1d4f-0a2c8e9b3d65",
+  "key": "store://demo-etl/task/tvm+serve/3b7d0f5a-6c8e-49b3-1d4f-0a2c8e9b3d65",
+  "kind": "tvm+serve",
+  "metadata": {
+    "name": "3b7d0f5a-6c8e-49b3-1d4f-0a2c8e9b3d65",
+    "project": "demo-etl",
+    "created_by": "digitalhubdev",
+    "updated_by": "digitalhubdev",
+    "created": "2025-01-15T10:15:00.000Z",
+    "updated": "2025-01-15T10:15:00.000Z"
+  },
+  "name": "3b7d0f5a-6c8e-49b3-1d4f-0a2c8e9b3d65",
+  "project": "demo-etl",
+  "spec": {
+    "function": "tvm://demo-etl/func-tvm-git:7b5e0d4a-5e20-4f3e-8d5a-0e1c2f6d7a81",
+    "volumes": [
+      {
+        "volume_type": "empty_dir",
+        "name": "volume1",
+        "mount_path": "/volume1"
+      }
+    ],
+    "resources": {
+      "cpu": "1",
+      "mem": "1Gi",
+      "disk": "1Gi"
+    },
+    "envs": [
+      {
+        "name": "TVM_LOG_LEVEL",
+        "value": "INFO"
+      }
+    ],
+    "secrets": [
+      "model-registry"
+    ],
+    "profile": "1xa100",
+    "model_path": "store://demo-etl/model/mobilenet-so:3c90b7c7-9f8d-40ab-9e94-6f8e5c6d2a10",
+    "served_name": "mobilenet",
+    "image": "tvm:0.15",
+    "replicas": 2,
+    "workers": 1,
+    "service_type": "NodePort",
+    "service_name": "tvm-service"
+  },
+  "status": {
+    "state": "READY"
+  },
+  "user": "digitalhubdev"
+}

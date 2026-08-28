@@ -1,0 +1,58 @@
+{
+  "id": "1f5b8c3d-4a6e-47f1-9b2c-8d0e6a7f9b21",
+  "key": "store://demo-etl/task/tvm+build/1f5b8c3d-4a6e-47f1-9b2c-8d0e6a7f9b21",
+  "kind": "tvm+build",
+  "metadata": {
+    "name": "1f5b8c3d-4a6e-47f1-9b2c-8d0e6a7f9b21",
+    "project": "demo-etl",
+    "created_by": "digitalhubdev",
+    "updated_by": "digitalhubdev",
+    "created": "2025-01-15T10:05:00.000Z",
+    "updated": "2025-01-15T10:05:00.000Z"
+  },
+  "name": "1f5b8c3d-4a6e-47f1-9b2c-8d0e6a7f9b21",
+  "project": "demo-etl",
+  "spec": {
+    "function": "tvm://demo-etl/func-tvm-git:7b5e0d4a-5e20-4f3e-8d5a-0e1c2f6d7a81",
+    "volumes": [
+      {
+        "volume_type": "empty_dir",
+        "name": "volume1",
+        "mount_path": "/volume1"
+      },
+      {
+        "volume_type": "persistent_volume_claim",
+        "name": "volume2",
+        "mount_path": "/volume2"
+      }
+    ],
+    "resources": {
+      "cpu": "1",
+      "mem": "1Gi",
+      "gpu": "1",
+      "disk": "1Gi"
+    },
+    "envs": [
+      {
+        "name": "TVM_LOG_LEVEL",
+        "value": "INFO"
+      }
+    ],
+    "secrets": [
+      "model-registry"
+    ],
+    "profile": "1xa100",
+    "image": "tvm:0.15",
+    "simplify": true,
+    "target_opset": 17,
+    "opset_override": 17,
+    "strict_shape_inference": true,
+    "data_prop": true,
+    "keep_params_in_input": false,
+    "sanitize_input_names": true
+  },
+  "status": {
+    "state": "READY"
+  },
+  "user": "digitalhubdev"
+}

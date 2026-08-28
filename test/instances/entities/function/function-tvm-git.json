@@ -1,0 +1,24 @@
+{
+  "id": "7b5e0d4a-5e20-4f3e-8d5a-0e1c2f6d7a81",
+  "key": "store://demo-etl/function/tvm/func-tvm-git:7b5e0d4a-5e20-4f3e-8d5a-0e1c2f6d7a81",
+  "kind": "tvm",
+  "metadata": {
+    "name": "func-tvm-git",
+    "project": "demo-etl",
+    "created_by": "digitalhubdev",
+    "updated_by": "digitalhubdev",
+    "created": "2025-01-15T10:00:00.000Z",
+    "updated": "2025-01-15T10:00:00.000Z",
+    "version": "7b5e0d4a-5e20-4f3e-8d5a-0e1c2f6d7a81"
+  },
+  "name": "func-tvm-git",
+  "project": "demo-etl",
+  "spec": {
+    "model": "git+https://github.com/my-account/my-model-repo",
+    "format": "onnx"
+  },
+  "status": {
+    "state": "CREATED"
+  },
+  "user": "digitalhubdev"
+}

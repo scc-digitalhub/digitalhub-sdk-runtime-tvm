@@ -1,0 +1,24 @@
+{
+  "id": "9d7a2f6c-7b42-51b5-0f7c-2a3e4b8c9d03",
+  "key": "store://demo-etl/function/tvm/func-tvm-zip:9d7a2f6c-7b42-51b5-0f7c-2a3e4b8c9d03",
+  "kind": "tvm",
+  "metadata": {
+    "name": "func-tvm-zip",
+    "project": "demo-etl",
+    "created_by": "digitalhubdev",
+    "updated_by": "digitalhubdev",
+    "created": "2025-01-15T10:02:00.000Z",
+    "updated": "2025-01-15T10:02:00.000Z",
+    "version": "9d7a2f6c-7b42-51b5-0f7c-2a3e4b8c9d03"
+  },
+  "name": "func-tvm-zip",
+  "project": "demo-etl",
+  "spec": {
+    "model": "zip+s3://my-bucket/models/mobilenet.zip",
+    "format": "auto"
+  },
+  "status": {
+    "state": "CREATED"
+  },
+  "user": "digitalhubdev"
+}
