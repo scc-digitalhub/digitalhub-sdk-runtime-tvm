@@ -12,6 +12,10 @@ class EntityKinds(Enum):
     Entity kinds.
     """
 
+    MODEL_ONNX = "onnx"
+    MODEL_TFLITE = "tflite"
+    MODEL_TVM_IR = "tvm-ir"
+    MODEL_TVM_SO = "tvm-so"
     FUNCTION_TVM = "tvm"
     TASK_TVM_BUILD = "tvm+build"
     TASK_TVM_COMPILE = "tvm+compile"
