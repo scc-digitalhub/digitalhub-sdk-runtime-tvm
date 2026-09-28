@@ -18,10 +18,10 @@ try:
         EntityKinds.RUN_TVM_COMPILE,
         EntityKinds.RUN_TVM_SERVE,
     )
-    runtime_builders = tuple((kind.value, RuntimeTvmBuilder) for kind in runtime_kinds)
+    runtime_builders = ((kind.value, RuntimeTvmBuilder) for kind in runtime_kinds)
 except ImportError as e:
     from digitalhub.utils.logger.logger import get_logger
 
     logger = get_logger(__name__)
     logger.debug(f"Error importing runtime builders: {e}")
-    runtime_builders = tuple()
+    runtime_builders = ()
