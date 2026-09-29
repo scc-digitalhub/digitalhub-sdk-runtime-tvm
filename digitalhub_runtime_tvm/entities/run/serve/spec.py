@@ -16,7 +16,7 @@ class RunSpecTvmRunServe(RunSpecTvmRun):
     def __init__(
         self,
         task: str,
-        model: str,
+        model: str | None = None,
         function: str | None = None,
         workflow: str | None = None,
         volumes: list[dict] | None = None,

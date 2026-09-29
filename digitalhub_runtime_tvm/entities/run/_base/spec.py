@@ -15,7 +15,7 @@ class RunSpecTvmRun(RunSpec):
     def __init__(
         self,
         task: str,
-        model: str,
+        model: str | None = None,
         function: str | None = None,
         workflow: str | None = None,
         volumes: list[dict] | None = None,
@@ -52,7 +52,7 @@ class RunValidatorTvmRun(RunValidator):
     Tvm run validator.
     """
 
-    model: str
+    model: str | None = None
     inputs: dict[str, str] | None = None
     format: TvmFormat | None = None
     ir_model: str | None = None

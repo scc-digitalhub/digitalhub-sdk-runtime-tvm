@@ -4,14 +4,16 @@
 
 from __future__ import annotations
 
+from digitalhub.entities.run._base.builder import RunBuilder
+
+from digitalhub_runtime_tvm.entities._base.runtime_entity.builder import RuntimeEntityBuilderTvm
 from digitalhub_runtime_tvm.entities._commons.enums import EntityKinds
-from digitalhub_runtime_tvm.entities.run._base.builder import RunTvmRunBuilder
 from digitalhub_runtime_tvm.entities.run.serve.entity import RunTvmRunServe
 from digitalhub_runtime_tvm.entities.run.serve.spec import RunSpecTvmRunServe, RunValidatorTvmRunServe
 from digitalhub_runtime_tvm.entities.run.serve.status import RunStatusTvmRunServe
 
 
-class RunTvmRunServeBuilder(RunTvmRunBuilder):
+class RunTvmRunServeBuilder(RunBuilder, RuntimeEntityBuilderTvm):
     """
     RunTvmRunServeBuilder runner.
     """
