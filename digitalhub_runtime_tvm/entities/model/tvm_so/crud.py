@@ -35,7 +35,55 @@ def log_tvm_so(
     manifest: dict | None = None,
     **kwargs,
 ) -> ModelTvmSo:
-    """Create and upload a TVM SO model entity."""
+    """
+    Create and upload a TVM SO model entity.
+
+    Parameters
+    ----------
+    project : str
+        Project name.
+    source : SourcesOrListOfSources
+        Local compiled TVM shared-object path or paths.
+    name : str, optional
+        Entity name. If omitted, it is inferred from ``source``.
+    drop_existing : bool, default=False
+        Whether to drop an existing entity with the same name.
+    path : str, optional
+        Destination path. If omitted, it is generated.
+    description : str, optional
+        Human-readable entity description.
+    labels : list[str], optional
+        Entity labels.
+    version : str, optional
+        Entity version.
+    framework : str, optional
+        Model framework.
+    algorithm : str, optional
+        Model algorithm.
+    parameters : dict, optional
+        Model parameters.
+    entry : str, optional
+        Compiled model entry function.
+    inputs : list[dict], optional
+        Input tensor signatures. Each item can define ``name`` (str),
+        ``dtype`` (str), ``shape`` (list[int]), ``scale`` (list[float]),
+        ``zero_point`` (list[int]), and ``quantized_dimension`` (int).
+    outputs : list[dict], optional
+        Output tensor signatures, with the same fields as ``inputs``.
+    target : str, optional
+        TVM hardware target used to compile the shared object.
+    opt_level : int, optional
+        TVM optimization level, from 0 to 3.
+    manifest : dict, optional
+        Parsed ``manifest.json`` produced by the compile job.
+    **kwargs : dict
+        Additional model specification parameters.
+
+    Returns
+    -------
+    ModelTvmSo
+        Created TVM SO model entity with uploaded files.
+    """
     return log_base_model(
         project=project,
         name=name,
@@ -80,7 +128,57 @@ def register_tvm_so(
     manifest: dict | None = None,
     **kwargs,
 ) -> ModelTvmSo:
-    """Register a TVM SO model entity for an existing source."""
+    """
+    Register a TVM SO model entity for an existing source.
+
+    Parameters
+    ----------
+    project : str
+        Project name.
+    source : SourcesOrListOfSources
+        Path or URI of the existing compiled TVM shared object.
+    name : str, optional
+        Entity name. If omitted, it is inferred from ``source``.
+    uuid : str, optional
+        Entity identifier.
+    version : str, optional
+        Entity version.
+    description : str, optional
+        Human-readable entity description.
+    labels : list[str], optional
+        Entity labels.
+    embedded : bool, default=False
+        Whether to embed the entity specification in the project specification.
+    extensions : list[dict], optional
+        Entity extensions.
+    framework : str, optional
+        Model framework.
+    algorithm : str, optional
+        Model algorithm.
+    parameters : dict, optional
+        Model parameters.
+    entry : str, optional
+        Compiled model entry function.
+    inputs : list[dict], optional
+        Input tensor signatures. Each item can define ``name`` (str),
+        ``dtype`` (str), ``shape`` (list[int]), ``scale`` (list[float]),
+        ``zero_point`` (list[int]), and ``quantized_dimension`` (int).
+    outputs : list[dict], optional
+        Output tensor signatures, with the same fields as ``inputs``.
+    target : str, optional
+        TVM hardware target used to compile the shared object.
+    opt_level : int, optional
+        TVM optimization level, from 0 to 3.
+    manifest : dict, optional
+        Parsed ``manifest.json`` produced by the compile job.
+    **kwargs : dict
+        Additional model specification parameters.
+
+    Returns
+    -------
+    ModelTvmSo
+        Registered TVM SO model entity.
+    """
     return register_base_model(
         project=project,
         source=source,

@@ -32,7 +32,49 @@ def log_onnx(
     opset: int | None = None,
     **kwargs,
 ) -> ModelOnnx:
-    """Create and upload an ONNX model entity."""
+    """
+    Create and upload an ONNX model entity.
+
+    Parameters
+    ----------
+    project : str
+        Project name.
+    source : SourcesOrListOfSources
+        Local ONNX model source path or paths.
+    name : str, optional
+        Entity name. If omitted, it is inferred from ``source``.
+    drop_existing : bool, default=False
+        Whether to drop an existing entity with the same name.
+    path : str, optional
+        Destination path. If omitted, it is generated.
+    description : str, optional
+        Human-readable entity description.
+    labels : list[str], optional
+        Entity labels.
+    version : str, optional
+        Entity version.
+    framework : str, optional
+        Model framework.
+    algorithm : str, optional
+        Model algorithm.
+    parameters : dict, optional
+        Model parameters.
+    inputs : list[dict], optional
+        Input tensor signatures. Each item can define ``name`` (str),
+        ``dtype`` (str), ``shape`` (list[int]), ``scale`` (list[float]),
+        ``zero_point`` (list[int]), and ``quantized_dimension`` (int).
+    outputs : list[dict], optional
+        Output tensor signatures, with the same fields as ``inputs``.
+    opset : int, optional
+        ONNX operator-set version.
+    **kwargs : dict
+        Additional model specification parameters.
+
+    Returns
+    -------
+    ModelOnnx
+        Created ONNX model entity with uploaded files.
+    """
     return log_base_model(
         project=project,
         name=name,
@@ -71,7 +113,51 @@ def register_onnx(
     opset: int | None = None,
     **kwargs,
 ) -> ModelOnnx:
-    """Register an ONNX model entity for an existing source."""
+    """
+    Register an ONNX model entity for an existing source.
+
+    Parameters
+    ----------
+    project : str
+        Project name.
+    source : SourcesOrListOfSources
+        Path or URI of the existing ONNX model.
+    name : str, optional
+        Entity name. If omitted, it is inferred from ``source``.
+    uuid : str, optional
+        Entity identifier.
+    version : str, optional
+        Entity version.
+    description : str, optional
+        Human-readable entity description.
+    labels : list[str], optional
+        Entity labels.
+    embedded : bool, default=False
+        Whether to embed the entity specification in the project specification.
+    extensions : list[dict], optional
+        Entity extensions.
+    framework : str, optional
+        Model framework.
+    algorithm : str, optional
+        Model algorithm.
+    parameters : dict, optional
+        Model parameters.
+    inputs : list[dict], optional
+        Input tensor signatures. Each item can define ``name`` (str),
+        ``dtype`` (str), ``shape`` (list[int]), ``scale`` (list[float]),
+        ``zero_point`` (list[int]), and ``quantized_dimension`` (int).
+    outputs : list[dict], optional
+        Output tensor signatures, with the same fields as ``inputs``.
+    opset : int, optional
+        ONNX operator-set version.
+    **kwargs : dict
+        Additional model specification parameters.
+
+    Returns
+    -------
+    ModelOnnx
+        Registered ONNX model entity.
+    """
     return register_base_model(
         project=project,
         source=source,

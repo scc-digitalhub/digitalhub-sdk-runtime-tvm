@@ -36,7 +36,56 @@ def log_tvm_ir(
     sanitize_input_names: bool | None = None,
     **kwargs,
 ) -> ModelTvmIr:
-    """Create and upload a TVM IR model entity."""
+    """
+    Create and upload a TVM IR model entity.
+
+    Parameters
+    ----------
+    project : str
+        Project name.
+    source : SourcesOrListOfSources
+        Local source model path or paths.
+    name : str, optional
+        Entity name. If omitted, it is inferred from ``source``.
+    drop_existing : bool, default=False
+        Whether to drop an existing entity with the same name.
+    path : str, optional
+        Destination path. If omitted, it is generated.
+    description : str, optional
+        Human-readable entity description.
+    labels : list[str], optional
+        Entity labels.
+    version : str, optional
+        Entity version.
+    framework : str, optional
+        Model framework.
+    algorithm : str, optional
+        Model algorithm.
+    parameters : dict, optional
+        Model parameters.
+    entry : str, optional
+        Relax entry function, for example ``main``.
+    inputs : list[dict], optional
+        Input tensor signatures. Each item can define ``name`` (str),
+        ``dtype`` (str), ``shape`` (list[int]), ``scale`` (list[float]),
+        ``zero_point`` (list[int]), and ``quantized_dimension`` (int).
+    outputs : list[dict], optional
+        Output tensor signatures, with the same fields as ``inputs``.
+    source_format : TvmSourceFormat, optional
+        Source format: ``auto``, ``onnx``, or ``tflite``.
+    keep_params_in_input : bool, optional
+        Keep model weights as input variables in ``params.bin`` instead of
+        folding them into the Relax IR.
+    sanitize_input_names : bool, optional
+        Sanitize input names when importing a model through the ONNX frontend.
+    **kwargs : dict
+        Additional model specification parameters.
+
+    Returns
+    -------
+    ModelTvmIr
+        Created TVM IR model entity with uploaded files.
+    """
     return log_base_model(
         project=project,
         name=name,
@@ -81,7 +130,58 @@ def register_tvm_ir(
     sanitize_input_names: bool | None = None,
     **kwargs,
 ) -> ModelTvmIr:
-    """Register a TVM IR model entity for an existing source."""
+    """
+    Register a TVM IR model entity for an existing source.
+
+    Parameters
+    ----------
+    project : str
+        Project name.
+    source : SourcesOrListOfSources
+        Path or URI of the existing TVM IR model.
+    name : str, optional
+        Entity name. If omitted, it is inferred from ``source``.
+    uuid : str, optional
+        Entity identifier.
+    version : str, optional
+        Entity version.
+    description : str, optional
+        Human-readable entity description.
+    labels : list[str], optional
+        Entity labels.
+    embedded : bool, default=False
+        Whether to embed the entity specification in the project specification.
+    extensions : list[dict], optional
+        Entity extensions.
+    framework : str, optional
+        Model framework.
+    algorithm : str, optional
+        Model algorithm.
+    parameters : dict, optional
+        Model parameters.
+    entry : str, optional
+        Relax entry function, for example ``main``.
+    inputs : list[dict], optional
+        Input tensor signatures. Each item can define ``name`` (str),
+        ``dtype`` (str), ``shape`` (list[int]), ``scale`` (list[float]),
+        ``zero_point`` (list[int]), and ``quantized_dimension`` (int).
+    outputs : list[dict], optional
+        Output tensor signatures, with the same fields as ``inputs``.
+    source_format : TvmSourceFormat, optional
+        Source format: ``auto``, ``onnx``, or ``tflite``.
+    keep_params_in_input : bool, optional
+        Keep model weights as input variables in ``params.bin`` instead of
+        folding them into the Relax IR.
+    sanitize_input_names : bool, optional
+        Sanitize input names when importing a model through the ONNX frontend.
+    **kwargs : dict
+        Additional model specification parameters.
+
+    Returns
+    -------
+    ModelTvmIr
+        Registered TVM IR model entity.
+    """
     return register_base_model(
         project=project,
         source=source,
