@@ -12,7 +12,7 @@ Explore the full documentation at the [link](https://scc-digitalhub.github.io/sd
 To install the Digitalhub SDK Runtime Tvm, you can use pip:
 
 ```bash
-pip install digitalhub-sdk-runtime-tvm
+pip install digitalhub-runtime-tvm
 ```
 
 ## Development
