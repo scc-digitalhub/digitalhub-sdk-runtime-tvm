@@ -28,7 +28,23 @@ def new_function_tvm(
     labels: list[str] | None = None,
     embedded: bool = False,
 ) -> FunctionTvm:
-    """Create a TVM function entity."""
+    """
+    Create a TVM function entity.
+
+    Examples
+    --------
+    Create a TVM function that serves a stored model:
+
+    ```python
+    import digitalhub as dh
+
+    function = dh.new_function_tvm(
+        project="my-project",
+        name="resnet18-serving",
+        model="store://my-project/model/tvm-so/resnet18-tvm:123e4567-e89b-42d3-a456-426614174000",
+    )
+    ```
+    """
     return new_function(
         project=project,
         name=name,

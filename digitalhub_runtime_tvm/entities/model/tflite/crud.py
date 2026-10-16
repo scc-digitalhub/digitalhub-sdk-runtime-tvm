@@ -71,6 +71,20 @@ def log_tflite(
     -------
     ModelTflite
         Created TFLite model entity with uploaded files.
+
+    Examples
+    --------
+    Log a local TFLite model:
+
+    ```python
+    import digitalhub as dh
+
+    model = dh.log_tflite(
+        project="my-project",
+        name="mobile-classifier",
+        source="./models/mobile-classifier.tflite",
+    )
+    ```
     """
     return log_base_model(
         project=project,
@@ -150,6 +164,20 @@ def register_tflite(
     -------
     ModelTflite
         Registered TFLite model entity.
+
+    Examples
+    --------
+    Register a TFLite model that already exists in remote storage:
+
+    ```python
+    import digitalhub as dh
+
+    model = dh.register_tflite(
+        project="my-project",
+        name="registered-mobile-classifier",
+        source="s3://my-bucket/models/mobile-classifier.tflite",
+    )
+    ```
     """
     return register_base_model(
         project=project,

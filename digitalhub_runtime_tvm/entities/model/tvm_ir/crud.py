@@ -85,6 +85,22 @@ def log_tvm_ir(
     -------
     ModelTvmIr
         Created TVM IR model entity with uploaded files.
+
+    Examples
+    --------
+    Log an ONNX model as a TVM IR model:
+
+    ```python
+    import digitalhub as dh
+
+    model = dh.log_tvm_ir(
+        project="my-project",
+        name="resnet18-relax",
+        source="./models/resnet18.onnx",
+        source_format="onnx",
+        entry="main",
+    )
+    ```
     """
     return log_base_model(
         project=project,
@@ -181,6 +197,21 @@ def register_tvm_ir(
     -------
     ModelTvmIr
         Registered TVM IR model entity.
+
+    Examples
+    --------
+    Register a TVM IR model that already exists in remote storage:
+
+    ```python
+    import digitalhub as dh
+
+    model = dh.register_tvm_ir(
+        project="my-project",
+        name="registered-resnet18-relax",
+        source="s3://my-bucket/models/resnet18.relax",
+        entry="main",
+    )
+    ```
     """
     return register_base_model(
         project=project,

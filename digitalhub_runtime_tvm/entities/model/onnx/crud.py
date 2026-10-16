@@ -74,6 +74,21 @@ def log_onnx(
     -------
     ModelOnnx
         Created ONNX model entity with uploaded files.
+
+    Examples
+    --------
+    Log a local ONNX model:
+
+    ```python
+    import digitalhub as dh
+
+    model = dh.log_onnx(
+        project="my-project",
+        name="image-classifier",
+        source="./models/image-classifier.onnx",
+        opset=17,
+    )
+    ```
     """
     return log_base_model(
         project=project,
@@ -157,6 +172,21 @@ def register_onnx(
     -------
     ModelOnnx
         Registered ONNX model entity.
+
+    Examples
+    --------
+    Register an ONNX model that already exists in remote storage:
+
+    ```python
+    import digitalhub as dh
+
+    model = dh.register_onnx(
+        project="my-project",
+        name="registered-image-classifier",
+        source="s3://my-bucket/models/image-classifier.onnx",
+        opset=17,
+    )
+    ```
     """
     return register_base_model(
         project=project,
