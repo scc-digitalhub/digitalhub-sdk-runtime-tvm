@@ -2,87 +2,90 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from pydantic import Field
+from pydantic import field_validator, model_validator
 
 from digitalhub_runtime_tvm.entities.run._base.spec import RunSpecTvmRun, RunValidatorTvmRun
-from digitalhub_runtime_tvm.entities.task.compile.spec import TvmTargetArchitecture
+from digitalhub_runtime_tvm.entities.run.compile.models import TvmOptimization, TvmTuning
 
 
 class RunSpecTvmRunCompile(RunSpecTvmRun):
-    """
-    Tvm compile run specifications.
-    """
+    """Tvm compile run specifications."""
 
     def __init__(
         self,
         task: str,
-        model: str | None = None,
-        function: str | None = None,
-        workflow: str | None = None,
-        volumes: list[dict] | None = None,
-        resources: dict | None = None,
-        envs: list[dict] | None = None,
-        secrets: list[str] | None = None,
-        profile: str | None = None,
-        inputs: dict[str, str] | None = None,
-        format: str | None = None,
-        ir_model: str | None = None,
-        so_model: str | None = None,
         model_path: str | None = None,
-        target_architecture: TvmTargetArchitecture | None = None,
-        opt_level: int | None = None,
-        cross_cc: str | None = None,
-        exec_mode: str | None = None,
-        relax_pipeline: str | None = None,
-        tir_pipeline: str | None = None,
-        system_lib: bool | None = None,
-        params_path: str | None = None,
+        target_architecture: str | None = None,
+        target: dict | None = None,
+        optimization: dict | None = None,
+        tuning: dict | None = None,
         tag: str | None = None,
         image: str | None = None,
         **kwargs,
     ) -> None:
-        super().__init__(
+        data = RunValidatorTvmRunCompile(
             task=task,
-            model=model,
-            function=function,
-            workflow=workflow,
-            volumes=volumes,
-            resources=resources,
-            envs=envs,
-            secrets=secrets,
-            profile=profile,
-            inputs=inputs,
-            format=format,
-            ir_model=ir_model,
-            so_model=so_model,
+            model_path=model_path,
+            target_architecture=target_architecture,
+            target=target,
+            optimization=optimization,
+            tuning=tuning,
+            tag=tag,
+            image=image,
             **kwargs,
-        )
-        self.model_path = model_path
-        self.target_architecture = target_architecture
-        self.opt_level = opt_level
-        self.cross_cc = cross_cc
-        self.exec_mode = exec_mode
-        self.relax_pipeline = relax_pipeline
-        self.tir_pipeline = tir_pipeline
-        self.system_lib = system_lib
-        self.params_path = params_path
-        self.tag = tag
-        self.image = image
+        ).to_dict()
+        super().__init__(**data)
+        self.model_path = data.get("model_path")
+        self.target_architecture = data.get("target_architecture")
+        self.target = data.get("target")
+        self.optimization = data.get("optimization")
+        self.tuning = data.get("tuning")
+        self.tag = data.get("tag")
+        self.image = data.get("image")
 
 
 class RunValidatorTvmRunCompile(RunValidatorTvmRun):
-    """
-    Tvm compile run validator.
-    """
+    """Tvm compile run validator."""
 
     model_path: str | None = None
-    target_architecture: TvmTargetArchitecture | None = None
-    opt_level: int | None = Field(default=None, ge=0)
-    cross_cc: str | None = None
-    exec_mode: str | None = None
-    relax_pipeline: str | None = None
-    tir_pipeline: str | None = None
-    system_lib: bool | None = None
-    params_path: str | None = None
+    target_architecture: str | None = None
+    target: dict | None = None
+    optimization: TvmOptimization | None = None
+    tuning: TvmTuning | None = None
     tag: str | None = None
     image: str | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def group_options(cls, value):
+        if not isinstance(value, dict):
+            return value
+        data = dict(value)
+        for name, model in (("optimization", TvmOptimization), ("tuning", TvmTuning)):
+            flat = {field: data.pop(field) for field in model.model_fields if field in data}
+            group = data.pop(name, None)
+            if isinstance(group, model):
+                group = group.to_dict()
+            if group is not None:
+                if not isinstance(group, dict):
+                    raise ValueError(f"{name} must be an object")
+                flat.update(group)
+            if flat:
+                data[name] = flat
+        return data
+
+    @field_validator("target_architecture", mode="before")
+    @classmethod
+    def normalize_target(cls, value):
+        if isinstance(value, str):
+            return value.strip().lower() or None
+        return value
+
+    @model_validator(mode="after")
+    def validate_target(self):
+        if self.target:
+            if self.target_architecture not in (None, "auto", "cpu", "llvm"):
+                raise ValueError("Use target or target_architecture, not both; leave the profile at auto")
+            if self.target.get("kind") != "llvm":
+                raise ValueError("target.kind must be llvm; only Linux CPU compilation is supported")
+        return self

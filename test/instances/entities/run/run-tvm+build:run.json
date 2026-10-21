@@ -45,7 +45,7 @@
     "format": "onnx",
     "ir_model": "store://demo-etl/model/mobilenet-relax:6c8b8bf5-1b63-46de-9e63-bdfc1b9c9d2f",
     "so_model": "store://demo-etl/model/mobilenet-so:3c90b7c7-9f8d-40ab-9e94-6f8e5c6d2a10",
-    "image": "tvm:0.15",
+    "image": "ghcr.io/scc-digitalhub/tvm-toolkit:0.26.0",
     "simplify": true,
     "target_opset": 17,
     "opset_override": 17,

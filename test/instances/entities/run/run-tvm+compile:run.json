@@ -45,17 +45,51 @@
     "format": "onnx",
     "ir_model": "store://demo-etl/model/mobilenet-relax:6c8b8bf5-1b63-46de-9e63-bdfc1b9c9d2f",
     "so_model": "store://demo-etl/model/mobilenet-so:3c90b7c7-9f8d-40ab-9e94-6f8e5c6d2a10",
-    "model_path": "store://demo-etl/model/mobilenet-relax:6c8b8bf5-1b63-46de-9e63-bdfc1b9c9d2f",
-    "target_architecture": "llvm",
-    "opt_level": 3,
-    "cross_cc": "",
-    "exec_mode": "vm",
-    "relax_pipeline": "default",
-    "tir_pipeline": "default",
-    "system_lib": false,
-    "params_path": "store://demo-etl/model/mobilenet-params:0e4f9c1a-2b7d-4e8f-9c0a-5d6b7e8f9012",
+    "model_path": "store://demo-etl/model/tvm-ir/mobilenet-relax:6c8b8bf5-1b63-46de-9e63-bdfc1b9c9d2f",
+    "target_architecture": "auto",
+    "target": {
+      "kind": "llvm",
+      "mtriple": "x86_64-linux-gnu",
+      "mcpu": "x86-64-v2"
+    },
     "tag": "mobilenet",
-    "image": "tvm:0.15"
+    "image": "ghcr.io/scc-digitalhub/tvm-toolkit:0.26.0",
+    "optimization": {
+      "target_num_cores": 2,
+      "opt_level": 3,
+      "cross_cc": "",
+      "exec_mode": "bytecode",
+      "relax_pipeline": "default",
+      "tir_pipeline": "default",
+      "system_lib": false,
+      "benchmark_runs": 10,
+      "params_path": "/shared/input/params.bin"
+    },
+    "tuning": {
+      "tuning_mode": "off",
+      "tuning_trials": 2000,
+      "max_trials_per_task": 16,
+      "tuning_trials_per_iter": 64,
+      "tuning_ops": [
+        "conv2d"
+      ],
+      "tuning_model_path": "store://demo-etl/model/tvm-so/mobilenet-tuned:1",
+      "tuning_runner": "local",
+      "tuning_workers": 2,
+      "tuning_seed": 0,
+      "tuning_number": 3,
+      "tuning_repeat": 1,
+      "tuning_min_repeat_ms": 100,
+      "tuning_alloc_repeat": 1,
+      "tuning_enable_cpu_cache_flush": false,
+      "tuning_builder_timeout_sec": 30,
+      "tuning_runner_timeout_sec": 30,
+      "rpc_tracker_host": "192.0.2.1",
+      "rpc_tracker_port": 9190,
+      "rpc_tracker_key": "raspberry-pi",
+      "rpc_session_timeout_sec": 60,
+      "allow_partial_tuning": false
+    }
   },
   "status": {
     "state": "READY"

@@ -41,15 +41,7 @@
     "secrets": [
       "model-registry"
     ],
-    "profile": "1xa100",
-    "image": "tvm:0.15",
-    "simplify": true,
-    "target_opset": 17,
-    "opset_override": 17,
-    "strict_shape_inference": true,
-    "data_prop": true,
-    "keep_params_in_input": false,
-    "sanitize_input_names": true
+    "profile": "1xa100"
   },
   "status": {
     "state": "READY"

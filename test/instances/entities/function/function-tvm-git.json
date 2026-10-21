@@ -15,7 +15,9 @@
   "project": "demo-etl",
   "spec": {
     "model": "git+https://github.com/my-account/my-model-repo",
-    "format": "onnx"
+    "format": "onnx",
+    "ir_model": "store://demo-etl/model/tvm-ir/mobilenet-ir:1",
+    "so_model": "store://demo-etl/model/tvm-so/mobilenet-so:1"
   },
   "status": {
     "state": "CREATED"
