@@ -35,14 +35,7 @@
     "secrets": [
       "model-registry"
     ],
-    "profile": "1xa100",
-    "model_path": "store://demo-etl/model/mobilenet-so:3c90b7c7-9f8d-40ab-9e94-6f8e5c6d2a10",
-    "served_name": "mobilenet",
-    "image": "tvm:0.15",
-    "replicas": 2,
-    "workers": 1,
-    "service_type": "NodePort",
-    "service_name": "tvm-service"
+    "profile": "1xa100"
   },
   "status": {
     "state": "READY"

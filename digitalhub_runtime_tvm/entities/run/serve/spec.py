@@ -67,8 +67,8 @@ class RunValidatorTvmRunServe(RunValidatorTvmRun):
     Tvm serve run validator.
     """
 
-    model_path: str | None = Field(default=None)
-    served_name: str | None = Field(default=None)
+    model_path: str | None = Field(default=None, pattern=r"^(store://[^/]+/model/[^/]+/[^:]+(:.+)?)?$")
+    served_name: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9])?$")
     image: str | None = None
     replicas: int | None = Field(default=None, ge=0)
     workers: int | None = Field(default=None, ge=1)

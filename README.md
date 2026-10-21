@@ -15,6 +15,82 @@ To install the Digitalhub SDK Runtime Tvm, you can use pip:
 pip install digitalhub-runtime-tvm
 ```
 
+## TVM run options (CORE 0.16)
+
+Tasks contain only common settings: `function`, `resources`, `profile`, `envs`,
+`secrets` and `volumes`. Pass TVM-specific options to each **run**, not to the task.
+Old task options are not migrated. This branch requires the matching CORE Task-to-Run update.
+
+```python
+import digitalhub as dh
+
+function = dh.get_function("xinet", project="my-project")
+function.run("build", simplify=True, wait=True)
+function.run(
+    "compile",
+    target_architecture="amd64",
+    optimization={"opt_level": 3, "exec_mode": "bytecode", "benchmark_runs": 10},
+    tuning={"tuning_mode": "off"},
+    wait=True,
+)
+function.run("serve", served_name="xinet", workers=1)
+```
+
+Build options include `image`, `simplify`, `target_opset`, `opset_override`,
+`strict_shape_inference`, `data_prop`, `keep_params_in_input` and `sanitize_input_names`.
+Compile accepts `model_path` to override `function.ir_model`; serve accepts it to
+override `function.so_model`. Other serve options are `served_name`, `image`,
+`replicas`, `workers`, `service_type` and `service_name`.
+
+Compile options are serialized in `optimization` and `tuning` groups, as in CORE.
+Flat keyword arguments such as `opt_level=3` and `tuning_mode="off"` are also accepted;
+explicit grouped values take precedence. Omitted values use CORE defaults.
+
+### CPU profiles and explicit targets
+
+`target_architecture` is a profile name configured by CORE in `runtime-tvm.yaml`,
+not a fixed SDK enumeration. The console lists the configured profiles. CORE validates
+names and resolves any configured aliases.
+
+For a one-off CPU configuration, omit the profile (or use `auto`) and pass a standard
+TVM target instead:
+
+```python
+function.run(
+    "compile",
+    target={"kind": "llvm", "mtriple": "aarch64-linux-gnu", "mcpu": "cortex-a72"},
+    optimization={"cross_cc": "aarch64-linux-gnu-g++"},
+    wait=True,
+)
+```
+
+Do not combine an explicit target with a non-auto profile. Optional
+`optimization.cross_cc_options` takes separate compiler arguments, for example
+`["--sysroot=/opt/sysroots/arm64"]`; that directory must exist in the compile image.
+Omit it to inherit the profile's arguments, or pass `[]` to clear them.
+Use `image` when another toolchain is needed. This is Linux CPU compilation, not
+automatic support for another serving architecture or GPU.
+
+`tuning_mode="off"` (the default) preserves but ignores all other tuning values.
+`tune` requires `tuning_trials`; `apply` requires `tuning_model_path` and ignores search
+settings. Local tuning ignores RPC fields; RPC tuning requires `rpc_tracker_host`,
+`rpc_tracker_port` and `rpc_tracker_key`, and ignores the local runner timeout.
+CORE also checks compatibility with the selected target, toolchain and Job resources.
+
+| Target | CPU profile |
+| --- | --- |
+| `auto` | Generic CPU of the compile node |
+| `amd64` | Intel/AMD 64-bit, x86-64-v2 |
+| `amd64_v3` | Intel/AMD 64-bit, x86-64-v3 (AVX2) |
+| `amd64_native` | CPU of the AMD64 compile node; requires compatible serving hardware |
+| `arm64` | Generic ARM 64-bit (AArch64) |
+| `arm64_pi5` | Raspberry Pi 5, Cortex-A76 |
+| `arm32` | ARM 32-bit, ARMv7 hard-float with NEON |
+
+The aliases accepted by CORE (`cpu`, `llvm`, `x86`, `x86_v3`, `x86_native`, `armv7l`)
+resolve to these profiles without rewriting the saved run. They do not enable
+additional architectures.
+
 ## Development
 
 See CONTRIBUTING for contribution instructions.
