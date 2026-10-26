@@ -1,11 +1,14 @@
-# DigitalHub SDK Runtime Tvm
+# DigitalHub SDK Runtime TVM
 
-[![license](https://img.shields.io/badge/license-Apache%202.0-blue)](https://github.com/scc-digitalhub/digitalhub-sdk-runtime-tvm/LICENSE) ![GitHub Release](https://img.shields.io/github/v/release/scc-digitalhub/digitalhub-sdk-runtime-tvm)
+[![license](https://img.shields.io/badge/license-Apache%202.0-blue)](https://github.com/scc-digitalhub/digitalhub-sdk-runtime-tvm/blob/main/LICENSE) ![GitHub Release](https://img.shields.io/github/v/release/scc-digitalhub/digitalhub-sdk-runtime-tvm)
 ![Status](https://img.shields.io/badge/status-stable-gold)
 
-The Digitalhub SDK Runtime Tvm is a runtime extension for the [Digitalhub SDK](https://github.com/scc-digitalhub/digitalhub-sdk). It enables you to deploy model as-a-service in the Digitalhub platform.
+The TVM extension for the [DigitalHub SDK](https://github.com/scc-digitalhub/digitalhub-sdk)
+creates Functions and Runs for ONNX/TFLite import, CPU compilation and Go/Rust serving
+through CORE. Compilation runs on Kubernetes; this package is the client.
 
-Explore the full documentation at the [link](https://scc-digitalhub.github.io/sdk-docs/reference/runtimes/).
+See the [TVM SDK reference](https://scc-digitalhub.github.io/docs/0.16/sdk/reference/runtimes/tvm/overview/)
+for all action parameters and examples.
 
 ## Quick start
 
@@ -17,23 +20,35 @@ pip install digitalhub-runtime-tvm
 
 ## TVM run options (CORE 0.16)
 
-Tasks contain only common settings: `function`, `resources`, `profile`, `envs`,
-`secrets` and `volumes`. Pass TVM-specific options to each **run**, not to the task.
-Old task options are not migrated. This branch requires the matching CORE Task-to-Run update.
+Use this extension with CORE 0.16's Run specs:
+
+| Object | Settings |
+| --- | --- |
+| Function | Source `model`, `format`; generated `ir_model` and `so_model` references |
+| Task | `function`, `resources`, `profile`, `envs`, `secrets`, `volumes` |
+| Build Run | `image` and ONNX conversion options |
+| Compile Run | `model_path`, `target_architecture` or `target`, `tag`, `image`, `optimization`, `tuning` |
+| Serve Run | `model_path`, `served_name`, `image`, `replicas`, `workers`, `service_type`, `service_name` |
+
+Pass TVM options to each Run; old Task options and previous Runs do not provide
+defaults. Common Task settings can be overridden for one Run.
 
 ```python
 import digitalhub as dh
 
-function = dh.get_function("xinet", project="my-project")
+project = dh.get_or_create_project("my-project")
+model = project.log_onnx(name="xinet", source="model.onnx")
+function = project.new_function(name="xinet", kind="tvm", model=model.key)
 function.run("build", simplify=True, wait=True)
 function.run(
     "compile",
     target_architecture="amd64",
+    resources={"cpu": "4", "mem": "8Gi"},
     optimization={"opt_level": 3, "exec_mode": "bytecode", "benchmark_runs": 10},
     tuning={"tuning_mode": "off"},
     wait=True,
 )
-function.run("serve", served_name="xinet", workers=1)
+function.run("serve", served_name="xinet", workers=1, resources={"cpu": "4", "mem": "2Gi"})
 ```
 
 Build options include `image`, `simplify`, `target_opset`, `opset_override`,
@@ -46,7 +61,14 @@ Compile options are serialized in `optimization` and `tuning` groups, as in CORE
 Flat keyword arguments such as `opt_level=3` and `tuning_mode="off"` are also accepted;
 explicit grouped values take precedence. Omitted values use CORE defaults.
 
+CORE updates model references on the same Function version. After several compiles,
+serve defaults to the last successfully saved `so_model`. Use a versioned `model_path`
+to select a particular target/build; existing services retain their Model.
+
 ### CPU profiles and explicit targets
+
+`profile` chooses platform scheduling/resources, such as a Raspberry Pi node;
+it does not choose the generated code's architecture.
 
 `target_architecture` is a profile name configured by CORE in `runtime-tvm.yaml`,
 not a fixed SDK enumeration. The console lists the configured profiles. CORE validates
@@ -93,7 +115,8 @@ additional architectures.
 
 ## Development
 
-See CONTRIBUTING for contribution instructions.
+The fixtures under `test/instances/` describe Function, Task, Run and Model schemas.
+Keep them aligned with CORE when changing the SDK specs. See [Contributing](#contributing).
 
 ## Security Policy
 
