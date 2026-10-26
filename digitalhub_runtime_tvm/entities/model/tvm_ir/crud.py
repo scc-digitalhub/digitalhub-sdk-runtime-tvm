@@ -44,7 +44,8 @@ def log_tvm_ir(
     project : str
         Project name.
     source : SourcesOrListOfSources
-        Local source model path or paths.
+        Local Relax IR bundle containing ``model.relax.json`` and ``metadata.json``;
+        include ``params.bin`` when the weights are detached.
     name : str, optional
         Entity name. If omitted, it is inferred from ``source``.
     drop_existing : bool, default=False
@@ -88,7 +89,7 @@ def log_tvm_ir(
 
     Examples
     --------
-    Log an ONNX model as a TVM IR model:
+    Upload an IR bundle already produced by ``tvm+build``. This does not convert ONNX:
 
     ```python
     import digitalhub as dh
@@ -96,7 +97,7 @@ def log_tvm_ir(
     model = dh.log_tvm_ir(
         project="my-project",
         name="resnet18-relax",
-        source="./models/resnet18.onnx",
+        source="./build/resnet18-ir/",
         source_format="onnx",
         entry="main",
     )
@@ -154,7 +155,7 @@ def register_tvm_ir(
     project : str
         Project name.
     source : SourcesOrListOfSources
-        Path or URI of the existing TVM IR model.
+        Directory or URI of an existing Relax IR bundle, including its metadata.
     name : str, optional
         Entity name. If omitted, it is inferred from ``source``.
     uuid : str, optional
@@ -208,7 +209,7 @@ def register_tvm_ir(
     model = dh.register_tvm_ir(
         project="my-project",
         name="registered-resnet18-relax",
-        source="s3://my-bucket/models/resnet18.relax",
+        source="s3://my-bucket/models/resnet18-ir/",
         entry="main",
     )
     ```

@@ -33,15 +33,15 @@ def new_function_tvm(
 
     Examples
     --------
-    Create a TVM function that serves a stored model:
+    Create a TVM function from a source Model, then run build, compile and serve:
 
     ```python
     import digitalhub as dh
 
     function = dh.new_function_tvm(
         project="my-project",
-        name="resnet18-serving",
-        model="store://my-project/model/tvm-so/resnet18-tvm:123e4567-e89b-42d3-a456-426614174000",
+        name="resnet18",
+        model="store://my-project/model/onnx/resnet18:123e4567-e89b-42d3-a456-426614174000",
     )
     ```
     """

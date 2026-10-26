@@ -43,7 +43,7 @@ def log_tvm_so(
     project : str
         Project name.
     source : SourcesOrListOfSources
-        Local compiled TVM shared-object path or paths.
+        Local compiled bundle containing both ``model.so`` and ``metadata.json``.
     name : str, optional
         Entity name. If omitted, it is inferred from ``source``.
     drop_existing : bool, default=False
@@ -75,7 +75,8 @@ def log_tvm_so(
     opt_level : int, optional
         TVM optimization level, from 0 to 3.
     manifest : dict, optional
-        Parsed ``manifest.json`` produced by the compile job.
+        Full parsed ``metadata.json`` produced by the compile Run, including TVM
+        version/commit and the effective target. Not ``tuning/manifest.json``.
     **kwargs : dict
         Additional model specification parameters.
 
@@ -89,14 +90,21 @@ def log_tvm_so(
     Log a compiled TVM shared-object model:
 
     ```python
+    import json
+    from pathlib import Path
     import digitalhub as dh
 
+    metadata = json.loads(Path("compiled-model/metadata.json").read_text())
     model = dh.log_tvm_so(
         project="my-project",
         name="resnet18-tvm",
-        source="./build/resnet18.so",
-        target="llvm -mcpu=x86-64-v2",
-        opt_level=3,
+        source="./compiled-model/",
+        target=metadata["target"],
+        opt_level=metadata["opt_level"],
+        entry=metadata["entry"],
+        inputs=metadata["inputs"],
+        outputs=metadata["outputs"],
+        manifest=metadata,
     )
     ```
     """
@@ -152,7 +160,7 @@ def register_tvm_so(
     project : str
         Project name.
     source : SourcesOrListOfSources
-        Path or URI of the existing compiled TVM shared object.
+        Directory or URI of the existing compiled bundle, including ``metadata.json``.
     name : str, optional
         Entity name. If omitted, it is inferred from ``source``.
     uuid : str, optional
@@ -186,7 +194,8 @@ def register_tvm_so(
     opt_level : int, optional
         TVM optimization level, from 0 to 3.
     manifest : dict, optional
-        Parsed ``manifest.json`` produced by the compile job.
+        Full parsed ``metadata.json`` produced by the compile Run, including TVM
+        version/commit and the effective target. Not ``tuning/manifest.json``.
     **kwargs : dict
         Additional model specification parameters.
 
@@ -197,17 +206,24 @@ def register_tvm_so(
 
     Examples
     --------
-    Register a compiled TVM shared object that already exists in remote storage:
+    Register an uploaded bundle using a local copy of its metadata:
 
     ```python
+    import json
+    from pathlib import Path
     import digitalhub as dh
 
+    metadata = json.loads(Path("compiled-model/metadata.json").read_text())
     model = dh.register_tvm_so(
         project="my-project",
         name="registered-resnet18-tvm",
-        source="s3://my-bucket/models/resnet18.so",
-        target="llvm -mcpu=x86-64-v2",
-        opt_level=3,
+        source="s3://my-bucket/models/resnet18-so/",
+        target=metadata["target"],
+        opt_level=metadata["opt_level"],
+        entry=metadata["entry"],
+        inputs=metadata["inputs"],
+        outputs=metadata["outputs"],
+        manifest=metadata,
     )
     ```
     """
