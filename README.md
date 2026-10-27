@@ -74,8 +74,9 @@ it does not choose the generated code's architecture.
 not a fixed SDK enumeration. The console lists the configured profiles. CORE validates
 names and resolves any configured aliases.
 
-For a one-off CPU configuration, omit the profile (or use `auto`) and pass a standard
-TVM target instead:
+For a one-off CPU configuration, omit `target_architecture` (or set it to `auto`)
+and pass a standard TVM target object instead. The separate `profile` parameter
+can still select platform scheduling and resources:
 
 ```python
 function.run(
@@ -86,10 +87,11 @@ function.run(
 )
 ```
 
-Do not combine an explicit target with a non-auto profile. Optional
+Do not combine an explicit target with a non-auto `target_architecture`. Optional
 `optimization.cross_cc_options` takes separate compiler arguments, for example
 `["--sysroot=/opt/sysroots/arm64"]`; that directory must exist in the compile image.
-Omit it to inherit the profile's arguments, or pass `[]` to clear them.
+When selecting a preset, omit it to inherit the preset's arguments, or pass `[]`
+to clear them. An explicit target does not inherit preset linker settings.
 Use `image` when another toolchain is needed. This is Linux CPU compilation, not
 automatic support for another serving architecture or GPU.
 
