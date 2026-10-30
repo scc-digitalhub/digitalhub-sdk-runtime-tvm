@@ -1,0 +1,27 @@
+{
+  "id": "mobilenet-tvm-so-model",
+  "key": "store://demo-etl/model/tvm-so/mobilenet-so:1",
+  "kind": "tvm-so",
+  "metadata": {
+    "name": "mobilenet-tvm-so",
+    "project": "demo-etl"
+  },
+  "name": "mobilenet-tvm-so",
+  "project": "demo-etl",
+  "spec": {
+    "path": "store://demo-etl/model/tvm-so/mobilenet-so:1",
+    "framework": "tvm",
+    "algorithm": "classification",
+    "parameters": {},
+    "entry": "main",
+    "inputs": [],
+    "outputs": [],
+    "target": "llvm",
+    "opt_level": 3,
+    "manifest": {}
+  },
+  "status": {
+    "state": "CREATED"
+  },
+  "user": "digitalhubdev"
+}

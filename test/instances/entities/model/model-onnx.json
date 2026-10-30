@@ -1,0 +1,24 @@
+{
+  "id": "mobilenet-onnx-model",
+  "key": "store://demo-etl/model/onnx/mobilenet:1",
+  "kind": "onnx",
+  "metadata": {
+    "name": "mobilenet-onnx",
+    "project": "demo-etl"
+  },
+  "name": "mobilenet-onnx",
+  "project": "demo-etl",
+  "spec": {
+    "path": "store://demo-etl/model/onnx/mobilenet:1",
+    "framework": "onnx",
+    "algorithm": "classification",
+    "parameters": {},
+    "inputs": [],
+    "outputs": [],
+    "opset": 17
+  },
+  "status": {
+    "state": "CREATED"
+  },
+  "user": "digitalhubdev"
+}
