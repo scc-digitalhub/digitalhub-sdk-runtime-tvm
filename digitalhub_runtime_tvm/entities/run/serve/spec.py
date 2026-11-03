@@ -5,6 +5,7 @@
 from digitalhub.entities.task._base.models import CoreServiceType
 from pydantic import Field
 
+from digitalhub_runtime_tvm.entities.function.tvm.spec import TvmFormat
 from digitalhub_runtime_tvm.entities.run._base.spec import RunSpecTvmRun, RunValidatorTvmRun
 
 
@@ -25,7 +26,7 @@ class RunSpecTvmRunServe(RunSpecTvmRun):
         secrets: list[str] | None = None,
         profile: str | None = None,
         inputs: dict[str, str] | None = None,
-        format: str | None = None,
+        format: TvmFormat | None = None,
         ir_model: str | None = None,
         so_model: str | None = None,
         model_path: str | None = None,
@@ -72,5 +73,5 @@ class RunValidatorTvmRunServe(RunValidatorTvmRun):
     image: str | None = None
     replicas: int | None = Field(default=None, ge=0)
     workers: int | None = Field(default=None, ge=1)
-    service_type: CoreServiceType | None = None
+    service_type: CoreServiceType | None = Field(default=None, json_schema_extra={"default": "ClusterIP"})
     service_name: str | None = None

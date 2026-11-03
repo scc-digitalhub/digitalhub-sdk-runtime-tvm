@@ -7,6 +7,7 @@ from __future__ import annotations
 from typing import Literal
 
 from digitalhub.entities.function._base.spec import FunctionSpec, FunctionValidator
+from pydantic import Field
 
 TvmFormat = Literal["auto", "onnx", "tflite"]
 
@@ -38,7 +39,7 @@ class FunctionValidatorTvm(FunctionValidator):
     model: str
     """Source model path or store key."""
 
-    format: TvmFormat | None = None
+    format: TvmFormat | None = Field(default=None, json_schema_extra={"default": "auto"})
     """Source model format."""
 
     ir_model: str | None = None

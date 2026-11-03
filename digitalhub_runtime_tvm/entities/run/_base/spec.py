@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from digitalhub.entities.run._base.spec import RunSpec, RunValidator
+from pydantic import Field
 
 from digitalhub_runtime_tvm.entities.function.tvm.spec import TvmFormat
 
@@ -54,6 +55,6 @@ class RunValidatorTvmRun(RunValidator):
 
     model: str | None = None
     inputs: dict[str, str] | None = None
-    format: TvmFormat | None = None
+    format: TvmFormat | None = Field(default=None, json_schema_extra={"default": "auto"})
     ir_model: str | None = None
     so_model: str | None = None

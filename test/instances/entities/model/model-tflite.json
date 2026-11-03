@@ -1,0 +1,23 @@
+{
+  "id": "mobilenet-tflite-model",
+  "key": "store://demo-etl/model/tflite/mobilenet:1",
+  "kind": "tflite",
+  "metadata": {
+    "name": "mobilenet-tflite",
+    "project": "demo-etl"
+  },
+  "name": "mobilenet-tflite",
+  "project": "demo-etl",
+  "spec": {
+    "path": "store://demo-etl/model/tflite/mobilenet:1",
+    "framework": "tflite",
+    "algorithm": "classification",
+    "parameters": {},
+    "inputs": [],
+    "outputs": []
+  },
+  "status": {
+    "state": "CREATED"
+  },
+  "user": "digitalhubdev"
+}
