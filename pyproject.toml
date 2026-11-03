@@ -28,7 +28,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "digitalhub[dev]>=0.16.0b15, <0.17"
+    "digitalhub[dev]>=0.16.0b15, <0.17",
+    "regex",
 ]
 
 [project.urls]
