@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+from digitalhub_runtime_tvm.entities.function.tvm.spec import TvmFormat
 from digitalhub_runtime_tvm.entities.run._base.spec import RunSpecTvmRun, RunValidatorTvmRun
 
 
@@ -22,7 +23,7 @@ class RunSpecTvmRunBuild(RunSpecTvmRun):
         secrets: list[str] | None = None,
         profile: str | None = None,
         inputs: dict[str, str] | None = None,
-        format: str | None = None,
+        format: TvmFormat | None = None,
         ir_model: str | None = None,
         so_model: str | None = None,
         image: str | None = None,
