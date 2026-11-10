@@ -46,7 +46,6 @@
     "ir_model": "store://demo-etl/model/mobilenet-relax:6c8b8bf5-1b63-46de-9e63-bdfc1b9c9d2f",
     "so_model": "store://demo-etl/model/mobilenet-so:3c90b7c7-9f8d-40ab-9e94-6f8e5c6d2a10",
     "model_path": "store://demo-etl/model/tvm-ir/mobilenet-relax:6c8b8bf5-1b63-46de-9e63-bdfc1b9c9d2f",
-    "target_architecture": "auto",
     "target": {
       "kind": "llvm",
       "mtriple": "x86_64-linux-gnu",
