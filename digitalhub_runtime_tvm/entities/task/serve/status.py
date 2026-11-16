@@ -4,6 +4,4 @@
 
 from digitalhub.entities.task._base.status import TaskStatus
 
-
-class TaskStatusTvmServe(TaskStatus):
-    """Tvm serve task status."""
+TaskStatusTvmServe = TaskStatus

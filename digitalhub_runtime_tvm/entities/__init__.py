@@ -21,9 +21,18 @@ from digitalhub_runtime_tvm.entities.task.build.builder import TaskTvmBuildBuild
 from digitalhub_runtime_tvm.entities.task.compile.builder import TaskTvmCompileBuilder
 from digitalhub_runtime_tvm.entities.task.serve.builder import TaskTvmServeBuilder
 
+try:
+    from digitalhub_runtime_tvm.runtimes.builder import RuntimeTvmBuilder
+except ImportError as e:
+    from digitalhub.utils.logger.logger import get_logger
+
+    get_logger(__name__).debug(f"Error importing runtime builder: {e}")
+    RuntimeTvmBuilder = None
+
 function_tvm_plugin = EntityPlugin(
     builder=FunctionTvmBuilder,
     shortcuts=(CrudPlugin(new_function_tvm),),
+    runtime_builder=RuntimeTvmBuilder,
 )
 model_onnx_plugin = EntityPlugin(
     builder=ModelOnnxBuilder,
@@ -48,10 +57,10 @@ entity_plugins = (
     model_tvm_ir_plugin,
     model_tvm_so_plugin,
     function_tvm_plugin,
-    EntityPlugin(builder=TaskTvmBuildBuilder),
-    EntityPlugin(builder=TaskTvmCompileBuilder),
-    EntityPlugin(builder=TaskTvmServeBuilder),
-    EntityPlugin(builder=RunTvmRunBuildBuilder),
-    EntityPlugin(builder=RunTvmRunCompileBuilder),
-    EntityPlugin(builder=RunTvmRunServeBuilder),
+    EntityPlugin(builder=TaskTvmBuildBuilder, runtime_builder=RuntimeTvmBuilder),
+    EntityPlugin(builder=TaskTvmCompileBuilder, runtime_builder=RuntimeTvmBuilder),
+    EntityPlugin(builder=TaskTvmServeBuilder, runtime_builder=RuntimeTvmBuilder),
+    EntityPlugin(builder=RunTvmRunBuildBuilder, runtime_builder=RuntimeTvmBuilder),
+    EntityPlugin(builder=RunTvmRunCompileBuilder, runtime_builder=RuntimeTvmBuilder),
+    EntityPlugin(builder=RunTvmRunServeBuilder, runtime_builder=RuntimeTvmBuilder),
 )

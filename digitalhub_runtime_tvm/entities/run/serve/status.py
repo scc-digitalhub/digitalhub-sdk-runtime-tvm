@@ -4,6 +4,4 @@
 
 from digitalhub_runtime_tvm.entities.run._base.status import RunStatusTvmRun
 
-
-class RunStatusTvmRunServe(RunStatusTvmRun):
-    """Tvm serve run status."""
+RunStatusTvmRunServe = RunStatusTvmRun

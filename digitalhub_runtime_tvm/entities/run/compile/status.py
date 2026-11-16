@@ -4,6 +4,4 @@
 
 from digitalhub_runtime_tvm.entities.run._base.status import RunStatusTvmRun
 
-
-class RunStatusTvmRunCompile(RunStatusTvmRun):
-    """Tvm compile run status."""
+RunStatusTvmRunCompile = RunStatusTvmRun

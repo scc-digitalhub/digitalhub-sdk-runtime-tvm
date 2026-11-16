@@ -4,6 +4,4 @@
 
 from digitalhub.entities.run._base.status import RunStatus
 
-
-class RunStatusTvmRun(RunStatus):
-    """Tvm run status."""
+RunStatusTvmRun = RunStatus

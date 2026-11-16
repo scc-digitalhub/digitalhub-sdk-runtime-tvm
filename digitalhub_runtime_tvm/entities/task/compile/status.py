@@ -4,6 +4,4 @@
 
 from digitalhub.entities.task._base.status import TaskStatus
 
-
-class TaskStatusTvmCompile(TaskStatus):
-    """Tvm compile task status."""
+TaskStatusTvmCompile = TaskStatus
