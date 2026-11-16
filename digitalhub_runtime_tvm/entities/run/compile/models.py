@@ -4,14 +4,18 @@
 
 from typing import Literal
 
-from digitalhub.entities._base.entity.spec import SpecValidator
-from pydantic import ConfigDict, Field, PrivateAttr, model_serializer, model_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, model_serializer, model_validator
 
 
-class TvmOptimization(SpecValidator):
+class _TvmOptions(BaseModel):
+    model_config = ConfigDict(extra="forbid", use_enum_values=True)
+
+    def to_dict(self) -> dict:
+        return self.model_dump(by_alias=True, exclude_none=True)
+
+
+class TvmOptimization(_TvmOptions):
     """Compilation options; omitted values use CORE defaults."""
-
-    model_config = ConfigDict(extra="forbid")
 
     target_num_cores: int | None = Field(default=None, ge=1)
     opt_level: int | None = Field(default=None, ge=0, le=3, json_schema_extra={"default": 3})
@@ -25,10 +29,9 @@ class TvmOptimization(SpecValidator):
     params_path: str | None = None
 
 
-class TvmTuning(SpecValidator):
+class TvmTuning(_TvmOptions):
     """MetaSchedule options, validated only while active."""
 
-    model_config = ConfigDict(extra="forbid")
     _inactive: dict = PrivateAttr(default_factory=dict)
 
     tuning_mode: Literal["off", "tune", "apply"] | None = Field(default=None, json_schema_extra={"default": "off"})

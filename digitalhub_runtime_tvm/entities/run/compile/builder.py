@@ -9,7 +9,7 @@ from digitalhub.entities.run._base.builder import RunBuilder
 from digitalhub_runtime_tvm.entities._base.runtime_entity.builder import RuntimeEntityBuilderTvm
 from digitalhub_runtime_tvm.entities._commons.enums import EntityKinds
 from digitalhub_runtime_tvm.entities.run.compile.entity import RunTvmRunCompile
-from digitalhub_runtime_tvm.entities.run.compile.spec import RunSpecTvmRunCompile, RunValidatorTvmRunCompile
+from digitalhub_runtime_tvm.entities.run.compile.spec import RunSpecTvmRunCompile
 from digitalhub_runtime_tvm.entities.run.compile.status import RunStatusTvmRunCompile
 
 
@@ -20,6 +20,5 @@ class RunTvmRunCompileBuilder(RunBuilder, RuntimeEntityBuilderTvm):
 
     ENTITY_CLASS = RunTvmRunCompile
     ENTITY_SPEC_CLASS = RunSpecTvmRunCompile
-    ENTITY_SPEC_VALIDATOR = RunValidatorTvmRunCompile
     ENTITY_STATUS_CLASS = RunStatusTvmRunCompile
     ENTITY_KIND = EntityKinds.RUN_TVM_COMPILE.value

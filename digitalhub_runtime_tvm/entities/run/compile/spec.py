@@ -2,50 +2,20 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+from typing import ClassVar
+
 from pydantic import Field, field_validator, model_validator
 
-from digitalhub_runtime_tvm.entities.run._base.spec import RunSpecTvmRun, RunValidatorTvmRun
+from digitalhub_runtime_tvm.entities.run._base.spec import RunSpecTvmRun
 from digitalhub_runtime_tvm.entities.run.compile.models import TvmOptimization, TvmTuning
 
 
 class RunSpecTvmRunCompile(RunSpecTvmRun):
     """Tvm compile run specifications."""
 
-    def __init__(
-        self,
-        task: str,
-        model_path: str | None = None,
-        target_architecture: str | None = None,
-        target: dict | None = None,
-        optimization: dict | None = None,
-        tuning: dict | None = None,
-        tag: str | None = None,
-        image: str | None = None,
-        **kwargs,
-    ) -> None:
-        data = RunValidatorTvmRunCompile(
-            task=task,
-            model_path=model_path,
-            target_architecture=target_architecture,
-            target=target,
-            optimization=optimization,
-            tuning=tuning,
-            tag=tag,
-            image=image,
-            **kwargs,
-        ).to_dict()
-        super().__init__(**data)
-        self.model_path = data.get("model_path")
-        self.target_architecture = data.get("target_architecture")
-        self.target = data.get("target")
-        self.optimization = data.get("optimization")
-        self.tuning = data.get("tuning")
-        self.tag = data.get("tag")
-        self.image = data.get("image")
-
-
-class RunValidatorTvmRunCompile(RunValidatorTvmRun):
-    """Tvm compile run validator."""
+    # Flat group options are normalized before Pydantic validates the fields.
+    ALLOW_EXTRA_INPUTS: ClassVar[bool] = True
+    FLAT_OPTION_FIELDS: ClassVar[set[str]] = set(TvmOptimization.model_fields) | set(TvmTuning.model_fields)
 
     model_path: str | None = None
     target_architecture: str | None = Field(default=None, json_schema_extra={"default": "auto"})
@@ -70,6 +40,15 @@ class RunValidatorTvmRunCompile(RunValidatorTvmRun):
     tuning: TvmTuning | None = None
     tag: str | None = None
     image: str | None = None
+
+    def __init__(self, **data) -> None:
+        allowed_fields = set(type(self).model_fields) | type(self).FLAT_OPTION_FIELDS
+        allowed_fields.update(field.alias for field in type(self).model_fields.values() if isinstance(field.alias, str))
+        unknown_fields = sorted(set(data) - allowed_fields)
+        if unknown_fields:
+            names = ", ".join(unknown_fields)
+            raise TypeError(f"Unexpected spec parameter(s) for {type(self).__name__}: {names}")
+        super().__init__(**data)
 
     @model_validator(mode="before")
     @classmethod
@@ -118,3 +97,7 @@ class RunValidatorTvmRunCompile(RunValidatorTvmRun):
             ):
                 raise ValueError("target.num-cores must be an integer greater than or equal to 1")
         return self
+
+
+class RunValidatorTvmRunCompile(RunSpecTvmRunCompile):
+    """Compatibility name for the typed TVM compile-run spec."""

@@ -8,7 +8,7 @@ from digitalhub.entities.model._base.builder import ModelBuilder
 
 from digitalhub_runtime_tvm.entities._commons.enums import EntityKinds
 from digitalhub_runtime_tvm.entities.model.onnx.entity import ModelOnnx
-from digitalhub_runtime_tvm.entities.model.onnx.spec import ModelSpecOnnx, ModelValidatorOnnx
+from digitalhub_runtime_tvm.entities.model.onnx.spec import ModelSpecOnnx
 from digitalhub_runtime_tvm.entities.model.onnx.status import ModelStatusOnnx
 
 
@@ -17,6 +17,5 @@ class ModelOnnxBuilder(ModelBuilder):
 
     ENTITY_CLASS = ModelOnnx
     ENTITY_SPEC_CLASS = ModelSpecOnnx
-    ENTITY_SPEC_VALIDATOR = ModelValidatorOnnx
     ENTITY_STATUS_CLASS = ModelStatusOnnx
     ENTITY_KIND = EntityKinds.MODEL_ONNX.value

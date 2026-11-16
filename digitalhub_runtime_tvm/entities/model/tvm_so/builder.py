@@ -9,7 +9,7 @@ from digitalhub.entities.model._base.builder import ModelBuilder
 from digitalhub_runtime_tvm.entities._commons.enums import EntityKinds
 from digitalhub_runtime_tvm.entities.model.tvm.status import ModelStatusTvm
 from digitalhub_runtime_tvm.entities.model.tvm_so.entity import ModelTvmSo
-from digitalhub_runtime_tvm.entities.model.tvm_so.spec import ModelSpecTvmSo, ModelValidatorTvmSo
+from digitalhub_runtime_tvm.entities.model.tvm_so.spec import ModelSpecTvmSo
 
 
 class ModelTvmSoBuilder(ModelBuilder):
@@ -17,6 +17,5 @@ class ModelTvmSoBuilder(ModelBuilder):
 
     ENTITY_CLASS = ModelTvmSo
     ENTITY_SPEC_CLASS = ModelSpecTvmSo
-    ENTITY_SPEC_VALIDATOR = ModelValidatorTvmSo
     ENTITY_STATUS_CLASS = ModelStatusTvm
     ENTITY_KIND = EntityKinds.MODEL_TVM_SO.value

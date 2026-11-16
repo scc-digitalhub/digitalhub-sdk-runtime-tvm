@@ -6,7 +6,7 @@ import pytest
 from pydantic import ValidationError
 
 from digitalhub_runtime_tvm.entities.model.tvm.models import TensorSpec
-from digitalhub_runtime_tvm.entities.run.serve.spec import RunSpecTvmRunServe, RunValidatorTvmRunServe
+from digitalhub_runtime_tvm.entities.run.serve.spec import RunSpecTvmRunServe
 
 
 def test_serve_spec_round_trip():
@@ -21,7 +21,7 @@ def test_serve_spec_round_trip():
         "service_name": "public",
     }
     spec = RunSpecTvmRunServe(**options).to_dict()
-    validated = RunValidatorTvmRunServe.model_validate(spec).model_dump(mode="json", exclude_none=True)
+    validated = RunSpecTvmRunServe.model_validate(spec).model_dump(mode="json", exclude_none=True)
     assert validated == {**options, "inputs": {}}
     assert RunSpecTvmRunServe(**validated).to_dict() == spec
 
@@ -29,7 +29,7 @@ def test_serve_spec_round_trip():
 def test_serve_spec_does_not_invent_runtime_defaults():
     spec = RunSpecTvmRunServe(task="tvm+serve://test/task").to_dict()
     assert spec == {"task": "tvm+serve://test/task", "inputs": {}}
-    assert RunValidatorTvmRunServe.model_validate(spec).model_dump(mode="json", exclude_none=True) == spec
+    assert RunSpecTvmRunServe.model_validate(spec).model_dump(mode="json", exclude_none=True) == spec
 
 
 @pytest.mark.parametrize(
@@ -47,7 +47,7 @@ def test_serve_spec_does_not_invent_runtime_defaults():
 )
 def test_invalid_serve_options_are_rejected(field, value):
     with pytest.raises(ValidationError) as error:
-        RunValidatorTvmRunServe.model_validate({"task": "tvm+serve://test/task", field: value})
+        RunSpecTvmRunServe.model_validate({"task": "tvm+serve://test/task", field: value})
     assert error.value.errors()[0]["loc"] == (field,)
 
 

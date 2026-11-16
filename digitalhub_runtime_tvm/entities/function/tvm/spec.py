@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from digitalhub.entities.function._base.spec import FunctionSpec, FunctionValidator
+from digitalhub.entities.function._base.spec import FunctionSpec
 from pydantic import Field
 
 TvmFormat = Literal["auto", "onnx", "tflite"]
@@ -15,25 +15,6 @@ TvmFormat = Literal["auto", "onnx", "tflite"]
 class FunctionSpecTvm(FunctionSpec):
     """
     FunctionTvm specifications.
-    """
-
-    def __init__(
-        self,
-        model: str,
-        format: TvmFormat | None = None,
-        ir_model: str | None = None,
-        so_model: str | None = None,
-    ) -> None:
-        super().__init__()
-        self.model = model
-        self.format = format
-        self.ir_model = ir_model
-        self.so_model = so_model
-
-
-class FunctionValidatorTvm(FunctionValidator):
-    """
-    FunctionTvm validator.
     """
 
     model: str
@@ -47,3 +28,7 @@ class FunctionValidatorTvm(FunctionValidator):
 
     so_model: str | None = None
     """Store key of the compiled model.so produced by compile."""
+
+
+class FunctionValidatorTvm(FunctionSpecTvm):
+    """Compatibility name for the typed TVM function spec."""

@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from digitalhub.entities.run._base.spec import RunSpec, RunValidator
-from pydantic import Field
+from digitalhub.entities.run._base.spec import RunSpec
+from pydantic import Field, field_validator
 
 from digitalhub_runtime_tvm.entities.function.tvm.spec import TvmFormat
 
@@ -13,48 +13,17 @@ class RunSpecTvmRun(RunSpec):
     Tvm run specifications.
     """
 
-    def __init__(
-        self,
-        task: str,
-        model: str | None = None,
-        function: str | None = None,
-        workflow: str | None = None,
-        volumes: list[dict] | None = None,
-        resources: dict | None = None,
-        envs: list[dict] | None = None,
-        secrets: list[str] | None = None,
-        profile: str | None = None,
-        inputs: dict[str, str] | None = None,
-        format: TvmFormat | None = None,
-        ir_model: str | None = None,
-        so_model: str | None = None,
-        **kwargs,
-    ) -> None:
-        super().__init__(
-            task=task,
-            function=function,
-            workflow=workflow,
-            volumes=volumes,
-            resources=resources,
-            envs=envs,
-            secrets=secrets,
-            profile=profile,
-            **kwargs,
-        )
-        self.model = model
-        self.inputs = inputs if inputs is not None else {}
-        self.format = format
-        self.ir_model = ir_model
-        self.so_model = so_model
-
-
-class RunValidatorTvmRun(RunValidator):
-    """
-    Tvm run validator.
-    """
-
     model: str | None = None
-    inputs: dict[str, str] | None = None
+    inputs: dict[str, str] = Field(default_factory=dict)
     format: TvmFormat | None = Field(default=None, json_schema_extra={"default": "auto"})
     ir_model: str | None = None
     so_model: str | None = None
+
+    @field_validator("inputs", mode="before")
+    @classmethod
+    def default_inputs(cls, value):
+        return {} if value is None else value
+
+
+class RunValidatorTvmRun(RunSpecTvmRun):
+    """Compatibility name for the typed TVM run spec."""
