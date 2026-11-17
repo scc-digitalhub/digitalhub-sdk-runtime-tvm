@@ -31,6 +31,9 @@ def new_function_tvm(
     """
     Create a TVM function entity.
 
+    The legacy so_model argument is ignored. Select the compiled Model with
+    model_path on the serve Run.
+
     Examples
     --------
     Create a TVM function from a source Model, then run build, compile and serve:
@@ -57,5 +60,4 @@ def new_function_tvm(
         model=model,
         format=format,
         ir_model=ir_model,
-        so_model=so_model,
     )

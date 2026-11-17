@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Literal
 
 from digitalhub.entities.function._base.spec import FunctionSpec
-from pydantic import Field
+from pydantic import Field, model_validator
 
 TvmFormat = Literal["auto", "onnx", "tflite"]
 
@@ -26,8 +26,12 @@ class FunctionSpecTvm(FunctionSpec):
     ir_model: str | None = None
     """Store key of the Relax IR model produced by build."""
 
-    so_model: str | None = None
-    """Store key of the compiled model.so produced by compile."""
+    @model_validator(mode="before")
+    @classmethod
+    def ignore_legacy_compiled_model(cls, data):
+        if isinstance(data, dict) and "so_model" in data:
+            data = {key: value for key, value in data.items() if key != "so_model"}
+        return data
 
 
 class FunctionValidatorTvm(FunctionSpecTvm):

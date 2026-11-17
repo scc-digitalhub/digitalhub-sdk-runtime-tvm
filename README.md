@@ -24,7 +24,7 @@ Use this extension with CORE 0.16's Run specs:
 
 | Object | Settings |
 | --- | --- |
-| Function | Source `model`, `format`; generated `ir_model` and `so_model` references |
+| Function | Source `model`, `format`; generated `ir_model` reference |
 | Task | `function`, `resources`, `profile`, `envs`, `secrets`, `volumes` |
 | Build Run | `image` and ONNX conversion options |
 | Compile Run | `model_path`, `target_architecture` or `target`, `tag`, `image`, `optimization`, `tuning` |
@@ -40,7 +40,7 @@ project = dh.get_or_create_project("my-project")
 model = project.log_onnx(name="xinet", source="model.onnx")
 function = project.new_function(name="xinet", kind="tvm", model=model.key)
 function.run("build", simplify=True, wait=True)
-function.run(
+compiled = function.run(
     "compile",
     target_architecture="amd64",
     resources={"cpu": "4", "mem": "8Gi"},
@@ -48,22 +48,30 @@ function.run(
     tuning={"tuning_mode": "off"},
     wait=True,
 )
-function.run("serve", served_name="xinet", workers=1, resources={"cpu": "4", "mem": "2Gi"})
+function.run(
+    "serve",
+    model_path=compiled.status.to_dict()["outputs"]["compiled_so"],
+    served_name="xinet",
+    workers=1,
+    resources={"cpu": "4", "mem": "2Gi"},
+)
 ```
 
 Build options include `image`, `simplify`, `target_opset`, `opset_override`,
 `strict_shape_inference`, `data_prop`, `keep_params_in_input` and `sanitize_input_names`.
-Compile accepts `model_path` to override `function.ir_model`; serve accepts it to
-override `function.so_model`. Other serve options are `served_name`, `image`,
+Compile accepts `model_path` to override `function.ir_model`; serve requires a
+versioned `model_path` from the chosen Compile's `status.outputs.compiled_so`.
+Other serve options are `served_name`, `image`,
 `replicas`, `workers`, `service_type` and `service_name`.
 
 Compile options are serialized in `optimization` and `tuning` groups, as in CORE.
 Flat keyword arguments such as `opt_level=3` and `tuning_mode="off"` are also accepted;
 explicit grouped values take precedence. Omitted values use CORE defaults.
 
-CORE updates model references on the same Function version. After several compiles,
-serve defaults to the last successfully saved `so_model`. Use a versioned `model_path`
-to select a particular target/build; existing services retain their Model.
+CORE saves only the build's `ir_model` reference on the Function. Each Compile keeps
+its own output, so compiling for another architecture does not change the Model
+selected by a Serve. Legacy Function `so_model` values are ignored; a new Serve
+without `model_path` is rejected. Existing services retain their selected Model.
 
 ### CPU profiles and explicit targets
 

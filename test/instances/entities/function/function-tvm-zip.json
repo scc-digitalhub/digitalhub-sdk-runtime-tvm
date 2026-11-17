@@ -16,8 +16,7 @@
   "spec": {
     "model": "zip+s3://my-bucket/models/mobilenet.zip",
     "format": "auto",
-    "ir_model": "store://demo-etl/model/tvm-ir/mobilenet-ir:1",
-    "so_model": "store://demo-etl/model/tvm-so/mobilenet-so:1"
+    "ir_model": "store://demo-etl/model/tvm-ir/mobilenet-ir:1"
   },
   "status": {
     "state": "CREATED"
