@@ -1,6 +1,14 @@
 name: Run Unit Local Test via Pytest
 
-on: [push]
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      core_schema_ref:
+        description: CORE schema revision (use an immutable commit for coordinated integration tests)
+        required: true
+        default: main
+        type: string
 
 jobs:
   build:
@@ -27,13 +35,16 @@ jobs:
           pip install ruff
           ruff check --output-format=github .
         continue-on-error: true
+      - name: Check out CORE schemas
+        uses: actions/checkout@v4
+        with:
+          repository: scc-digitalhub/digitalhub-core
+          ref: ${{ inputs.core_schema_ref || 'main' }}
+          path: core-schema-source
       - name: Get schema files from core
         run: |
-          wget https://github.com/scc-digitalhub/digitalhub-core/archive/main.zip
-          7z x main.zip
-          rm main.zip
-          mv digitalhub-core-main/schemas/specs test/instances/schemas
-          rm -r digitalhub-core-main
+          cp -R core-schema-source/schemas/specs test/instances/schemas
+          git -C core-schema-source rev-parse HEAD
       - uses: actions/checkout@v4
         with:
           repository: scc-digitalhub/digitalhub-sdk
@@ -41,7 +52,9 @@ jobs:
           path: digitalhub-sdk
       - name: Test with pytest
         env:
-          PYTHONPATH: ${{ github.workspace }}/digitalhub-sdk/test/_digitalhub_test_helpers
+          PYTHONPATH: ${{ github.workspace }}/digitalhub-sdk:${{ github.workspace }}/digitalhub-sdk/test/_digitalhub_test_helpers
+          TVM_REQUIRE_CORE_SCHEMAS: "1"
+          TVM_CORE_SCHEMA_DIR: ${{ github.workspace }}/test/instances/schemas
         run: |
           coverage run -m pytest test -v -s
       - name: Generate Coverage Report

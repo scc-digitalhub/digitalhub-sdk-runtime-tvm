@@ -26,7 +26,8 @@
     "resources": {
       "cpu": "2",
       "mem": "2Gi",
-      "disk": "2Gi"
+      "disk": "2Gi",
+      "gpu": "1"
     },
     "envs": [
       {
@@ -45,17 +46,23 @@
     "format": "onnx",
     "ir_model": "store://demo-etl/model/mobilenet-relax:6c8b8bf5-1b63-46de-9e63-bdfc1b9c9d2f",
     "model_path": "store://demo-etl/model/tvm-ir/mobilenet-relax:6c8b8bf5-1b63-46de-9e63-bdfc1b9c9d2f",
+    "target_architecture": "auto",
     "target": {
-      "kind": "llvm",
-      "mtriple": "x86_64-linux-gnu",
-      "mcpu": "x86-64-v2"
+      "kind": "cuda",
+      "arch": "sm_80",
+      "host": {
+        "kind": "llvm",
+        "mtriple": "x86_64-linux-gnu",
+        "mcpu": "x86-64-v2"
+      }
     },
     "tag": "mobilenet",
-    "image": "ghcr.io/scc-digitalhub/tvm-toolkit:0.26.0",
+    "image": "example/tvm-toolkit-cuda:custom",
     "optimization": {
       "target_num_cores": 2,
       "opt_level": 3,
       "cross_cc": "",
+      "cross_cc_options": [],
       "exec_mode": "bytecode",
       "relax_pipeline": "default",
       "tir_pipeline": "default",

@@ -11,6 +11,8 @@ class RunSpecTvmRunBuild(RunSpecTvmRun, TvmBuildSpecMixin):
     Tvm build run specifications.
     """
 
+    sort_onnx: bool | None = None
+
 
 class RunValidatorTvmRunBuild(RunSpecTvmRunBuild):
     """Compatibility name for the typed TVM build-run spec."""
