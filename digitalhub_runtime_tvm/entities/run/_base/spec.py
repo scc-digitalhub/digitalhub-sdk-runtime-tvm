@@ -25,5 +25,4 @@ class RunSpecTvmRun(RunSpec):
         return {} if value is None else value
 
 
-class RunValidatorTvmRun(RunSpecTvmRun):
-    """Compatibility name for the typed TVM run spec."""
+RunValidatorTvmRun = RunSpecTvmRun

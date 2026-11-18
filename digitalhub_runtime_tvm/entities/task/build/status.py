@@ -2,6 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from digitalhub.entities.task._base.status import TaskStatus
+from digitalhub.entities._base.entity.status import Status
 
-TaskStatusTvmBuild = TaskStatus
+TaskStatusTvmBuild = Status

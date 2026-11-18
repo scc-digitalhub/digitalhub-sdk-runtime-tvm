@@ -6,13 +6,43 @@ import pytest
 from digitalhub.entities._constructors.spec import build_spec
 from pydantic import ValidationError
 
-from digitalhub_runtime_tvm.entities.function.tvm.spec import FunctionSpecTvm
-from digitalhub_runtime_tvm.entities.model.onnx.spec import ModelSpecOnnx
+from digitalhub_runtime_tvm.entities.function.tvm.spec import FunctionSpecTvm, FunctionValidatorTvm
+from digitalhub_runtime_tvm.entities.model.onnx.spec import ModelSpecOnnx, ModelValidatorOnnx
+from digitalhub_runtime_tvm.entities.model.tflite.spec import ModelSpecTflite, ModelValidatorTflite
 from digitalhub_runtime_tvm.entities.model.tvm.models import TensorSpec
-from digitalhub_runtime_tvm.entities.run.build.spec import RunSpecTvmRunBuild
+from digitalhub_runtime_tvm.entities.model.tvm.spec import ModelSpecTvm, ModelValidatorTvm
+from digitalhub_runtime_tvm.entities.model.tvm_ir.spec import ModelSpecTvmIr, ModelValidatorTvmIr
+from digitalhub_runtime_tvm.entities.model.tvm_so.spec import ModelSpecTvmSo, ModelValidatorTvmSo
+from digitalhub_runtime_tvm.entities.run._base.spec import RunSpecTvmRun, RunValidatorTvmRun
+from digitalhub_runtime_tvm.entities.run.build.spec import RunSpecTvmRunBuild, RunValidatorTvmRunBuild
 from digitalhub_runtime_tvm.entities.run.compile.models import TvmOptimization, TvmTuning
-from digitalhub_runtime_tvm.entities.run.compile.spec import RunSpecTvmRunCompile
-from digitalhub_runtime_tvm.entities.task.compile.spec import TaskSpecTvmCompile
+from digitalhub_runtime_tvm.entities.run.compile.spec import RunSpecTvmRunCompile, RunValidatorTvmRunCompile
+from digitalhub_runtime_tvm.entities.run.serve.spec import RunSpecTvmRunServe, RunValidatorTvmRunServe
+from digitalhub_runtime_tvm.entities.task.build.spec import TaskSpecTvmBuild, TaskValidatorTvmBuild
+from digitalhub_runtime_tvm.entities.task.compile.spec import TaskSpecTvmCompile, TaskValidatorTvmCompile
+from digitalhub_runtime_tvm.entities.task.serve.spec import TaskSpecTvmServe, TaskValidatorTvmServe
+
+
+@pytest.mark.parametrize(
+    ("compatibility_name", "spec_class"),
+    [
+        (FunctionValidatorTvm, FunctionSpecTvm),
+        (TaskValidatorTvmBuild, TaskSpecTvmBuild),
+        (TaskValidatorTvmServe, TaskSpecTvmServe),
+        (TaskValidatorTvmCompile, TaskSpecTvmCompile),
+        (RunValidatorTvmRun, RunSpecTvmRun),
+        (RunValidatorTvmRunBuild, RunSpecTvmRunBuild),
+        (RunValidatorTvmRunServe, RunSpecTvmRunServe),
+        (RunValidatorTvmRunCompile, RunSpecTvmRunCompile),
+        (ModelValidatorTvm, ModelSpecTvm),
+        (ModelValidatorTvmIr, ModelSpecTvmIr),
+        (ModelValidatorOnnx, ModelSpecOnnx),
+        (ModelValidatorTflite, ModelSpecTflite),
+        (ModelValidatorTvmSo, ModelSpecTvmSo),
+    ],
+)
+def test_validator_names_are_spec_aliases(compatibility_name, spec_class):
+    assert compatibility_name is spec_class
 
 
 def test_tvm_function_and_model_specs_use_typed_fields():

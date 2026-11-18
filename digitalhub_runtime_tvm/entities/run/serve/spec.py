@@ -12,5 +12,4 @@ class RunSpecTvmRunServe(RunSpecTvmRun, TvmServeSpecMixin):
     """
 
 
-class RunValidatorTvmRunServe(RunSpecTvmRunServe):
-    """Compatibility name for the typed TVM serve-run spec."""
+RunValidatorTvmRunServe = RunSpecTvmRunServe

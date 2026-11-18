@@ -15,5 +15,4 @@ class ModelSpecTvmSo(ModelSpecTvm):
     manifest: dict | None = None
 
 
-class ModelValidatorTvmSo(ModelSpecTvmSo):
-    """Compatibility name for the typed TVM shared-object model spec."""
+ModelValidatorTvmSo = ModelSpecTvmSo

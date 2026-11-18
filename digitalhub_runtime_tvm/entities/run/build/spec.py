@@ -12,5 +12,4 @@ class RunSpecTvmRunBuild(RunSpecTvmRun, TvmBuildSpecMixin):
     """
 
 
-class RunValidatorTvmRunBuild(RunSpecTvmRunBuild):
-    """Compatibility name for the typed TVM build-run spec."""
+RunValidatorTvmRunBuild = RunSpecTvmRunBuild

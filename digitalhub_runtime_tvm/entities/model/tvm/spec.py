@@ -17,5 +17,4 @@ class ModelSpecTvm(ModelSpec):
     outputs: list[TensorSpec] | None = None
 
 
-class ModelValidatorTvm(ModelSpecTvm):
-    """Compatibility name for the typed TVM model spec."""
+ModelValidatorTvm = ModelSpecTvm

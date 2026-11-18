@@ -5,11 +5,11 @@
 from __future__ import annotations
 
 from digitalhub.entities.model._base.builder import ModelBuilder
+from digitalhub.entities.model._base.status import ModelStatus
 
 from digitalhub_runtime_tvm.entities._commons.enums import EntityKinds
 from digitalhub_runtime_tvm.entities.model.tflite.entity import ModelTflite
 from digitalhub_runtime_tvm.entities.model.tflite.spec import ModelSpecTflite
-from digitalhub_runtime_tvm.entities.model.tflite.status import ModelStatusTflite
 
 
 class ModelTfliteBuilder(ModelBuilder):
@@ -17,5 +17,5 @@ class ModelTfliteBuilder(ModelBuilder):
 
     ENTITY_CLASS = ModelTflite
     ENTITY_SPEC_CLASS = ModelSpecTflite
-    ENTITY_STATUS_CLASS = ModelStatusTflite
+    ENTITY_STATUS_CLASS = ModelStatus
     ENTITY_KIND = EntityKinds.MODEL_TFLITE.value

@@ -51,5 +51,4 @@ class TaskSpecTvmCompile(TaskSpecFunction):
     allow_partial_tuning: bool | None = Field(default=None, json_schema_extra={"default": False})
 
 
-class TaskValidatorTvmCompile(TaskSpecTvmCompile):
-    """Compatibility name for the typed TVM compile-task spec."""
+TaskValidatorTvmCompile = TaskSpecTvmCompile

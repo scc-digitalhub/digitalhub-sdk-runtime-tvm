@@ -9,8 +9,9 @@ import typing
 from digitalhub.entities.model._base.entity import Model
 
 if typing.TYPE_CHECKING:
+    from digitalhub.entities.model._base.status import ModelStatus
+
     from digitalhub_runtime_tvm.entities.model.onnx.spec import ModelSpecOnnx
-    from digitalhub_runtime_tvm.entities.model.onnx.status import ModelStatusOnnx
 
 
 class ModelOnnx(Model):
@@ -20,4 +21,4 @@ class ModelOnnx(Model):
         super().__init__(*args, **kwargs)
 
         self.spec: ModelSpecOnnx
-        self.status: ModelStatusOnnx
+        self.status: ModelStatus

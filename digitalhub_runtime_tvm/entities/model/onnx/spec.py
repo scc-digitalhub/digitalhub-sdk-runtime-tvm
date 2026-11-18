@@ -18,5 +18,4 @@ class ModelSpecOnnx(ModelSpec):
     opset: int | None = Field(default=None, ge=1)
 
 
-class ModelValidatorOnnx(ModelSpecOnnx):
-    """Compatibility name for the typed ONNX model spec."""
+ModelValidatorOnnx = ModelSpecOnnx

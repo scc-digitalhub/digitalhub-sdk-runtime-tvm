@@ -99,5 +99,4 @@ class RunSpecTvmRunCompile(RunSpecTvmRun):
         return self
 
 
-class RunValidatorTvmRunCompile(RunSpecTvmRunCompile):
-    """Compatibility name for the typed TVM compile-run spec."""
+RunValidatorTvmRunCompile = RunSpecTvmRunCompile

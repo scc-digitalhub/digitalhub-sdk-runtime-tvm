@@ -21,5 +21,4 @@ class TaskSpecTvmBuild(TaskSpecFunction, TvmBuildSpecMixin):
     """Common task settings and TVM build options."""
 
 
-class TaskValidatorTvmBuild(TaskSpecTvmBuild):
-    """Compatibility name for the typed TVM build-task spec."""
+TaskValidatorTvmBuild = TaskSpecTvmBuild
