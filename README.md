@@ -175,35 +175,10 @@ NVIDIA GPU/driver; there is no separate serve device option.
 ## Development
 
 The fixtures under `test/instances/` describe Function, Task, Run and Model schemas.
-Keep them aligned with CORE when changing the SDK specs. Compile contract tests check
-both the SDK schema and the CORE export under `test/instances/schemas`; populate that
-directory from `schemas/specs` in the matching CORE checkout. These tests validate
-serialization and schema contracts without executing CUDA workloads.
-Set `TVM_CORE_SCHEMA_DIR=/path/to/digitalhub-core/schemas/specs` for local contract
-tests and `TVM_REQUIRE_CORE_SCHEMAS=1` to fail if exports are missing. The CI still
-uses CORE `main` by default. Its manual `core_schema_ref` input supports a specific
-CORE commit for coordinated integration checks; matching exports must reach main
-before normal CI can pass. A passing local test does not update remote schemas.
-
-To run the complete suite against a local CORE checkout, use a Python environment
-with this package's `.[dev]` dependencies installed and run the following from this
-repository's root. Set the paths to the matching CORE and DigitalHub SDK checkouts.
-The shared SDK checkout must provide the typed Pydantic specs and test helpers.
-The entity fixture tests read `instances/schemas`, while the contract tests also
-accept `TVM_CORE_SCHEMA_DIR`.
-
-```bash
-core_schemas=/path/to/digitalhub-core/schemas/specs
-shared_sdk=/path/to/digitalhub-sdk
-test_dir="$(mktemp -d)"
-mkdir "$test_dir/instances"
-cp test/test_*.py "$test_dir/"
-cp -R test/instances/entities "$test_dir/instances/"
-ln -s "$core_schemas" "$test_dir/instances/schemas"
-PYTHONPATH="$PWD:$shared_sdk:$shared_sdk/test/_digitalhub_test_helpers" \
-  TVM_CORE_SCHEMA_DIR="$core_schemas" TVM_REQUIRE_CORE_SCHEMAS=1 \
-  python -m pytest "$test_dir" -q
-```
+Keep them aligned with CORE when changing the SDK specs. CI checks serialization
+and schema contracts against CORE `main` by default. Its manual `core_schema_ref`
+input selects a specific revision for coordinated integration checks. Matching
+exports must reach CORE `main` before the default CI checks can pass.
 
 TVM-specific fields belong to Run specs, while Tasks carry common Kubernetes
 settings. Align both repositories and all six TVM Task/Run schemas when integrating
