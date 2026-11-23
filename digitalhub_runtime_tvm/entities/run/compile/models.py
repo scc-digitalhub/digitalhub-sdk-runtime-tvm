@@ -66,21 +66,30 @@ class TvmTuning(_TvmOptions):
         fields = schema["properties"]
         apply_names = {"tuning_model_path", "tuning_ops", "allow_partial_tuning"}
         rpc_names = {name for name in fields if name.startswith("rpc_")}
-        tune = {"properties": {name: value for name, value in fields.items()
-                               if name not in rpc_names | {"tuning_mode", "tuning_runner_timeout_sec"}},
-                "required": ["tuning_trials"]}
+        tune = {
+            "properties": {
+                name: value
+                for name, value in fields.items()
+                if name not in rpc_names | {"tuning_mode", "tuning_runner_timeout_sec"}
+            },
+            "required": ["tuning_trials"],
+        }
         tune["properties"]["tuning_trials"] = {"type": "integer", "minimum": 1}
-        rpc = {"properties": {name: fields[name] for name in rpc_names},
-               "required": ["rpc_tracker_host", "rpc_tracker_port", "rpc_tracker_key"]}
+        rpc = {
+            "properties": {name: fields[name] for name in rpc_names},
+            "required": ["rpc_tracker_host", "rpc_tracker_port", "rpc_tracker_key"],
+        }
         for name in ("rpc_tracker_host", "rpc_tracker_key"):
             rpc["properties"][name] = {"type": "string", "pattern": r"\S"}
         rpc["properties"]["rpc_tracker_port"] = {"type": "integer", "minimum": 1, "maximum": 65535}
-        tune.update({"if": {"required": ["tuning_runner"],
-                            "properties": {"tuning_runner": {"const": "rpc"}}},
-                     "then": rpc,
-                     "else": {"properties": {"tuning_runner_timeout_sec": fields["tuning_runner_timeout_sec"]}}})
-        apply = {"properties": {name: fields[name] for name in apply_names},
-                 "required": ["tuning_model_path"]}
+        tune.update(
+            {
+                "if": {"required": ["tuning_runner"], "properties": {"tuning_runner": {"const": "rpc"}}},
+                "then": rpc,
+                "else": {"properties": {"tuning_runner_timeout_sec": fields["tuning_runner_timeout_sec"]}},
+            }
+        )
+        apply = {"properties": {name: fields[name] for name in apply_names}, "required": ["tuning_model_path"]}
         apply["properties"]["tuning_model_path"] = {"type": "string", "pattern": r"\S"}
         schema["properties"] = {name: value if name == "tuning_mode" else {} for name, value in fields.items()}
         schema["allOf"] = [

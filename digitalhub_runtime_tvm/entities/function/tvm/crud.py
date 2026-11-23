@@ -8,8 +8,8 @@ import typing
 
 from digitalhub.entities.function.crud import new_function
 
+from digitalhub_runtime_tvm.entities._commons.models import TvmFormat
 from digitalhub_runtime_tvm.entities.function.tvm.builder import FunctionTvmBuilder
-from digitalhub_runtime_tvm.entities.function.tvm.spec import TvmFormat
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_tvm.entities.function.tvm.entity import FunctionTvm

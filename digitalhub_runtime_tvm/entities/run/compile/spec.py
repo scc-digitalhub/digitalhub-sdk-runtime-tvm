@@ -10,7 +10,6 @@ from pydantic import Field, field_validator, model_validator
 from digitalhub_runtime_tvm.entities.run._base.spec import RunSpecTvmRun, normalize_model_path
 from digitalhub_runtime_tvm.entities.run.compile.models import TvmOptimization, TvmTuning
 
-
 _CUDA_ARCH_PATTERN = r"^sm_[0-9]+[a-z]?$"
 _CUDA_HOST_TRIPLE_PATTERN = r"^(x86_64|amd64|aarch64|arm64)(-[A-Za-z0-9_+.]+)*-linux-gnu$"
 _CUDA_DEVICE_LIMITS = ("max_shared_memory_per_block", "max_threads_per_block", "thread_warp_size")
@@ -88,17 +87,37 @@ class RunSpecTvmRunCompile(RunSpecTvmRun):
     @classmethod
     def __get_pydantic_json_schema__(cls, core_schema, handler):
         schema = handler(core_schema)
-        schema.setdefault("allOf", []).extend([
-            {"if": {"required": ["target"], "properties": {"target": {"type": "object", "minProperties": 1}}},
-             "then": {"properties": {"target_architecture": {"enum": [None, "auto", "cpu", "llvm"]}}}},
-            {"if": {"required": ["target", "tuning"], "properties": {
-                "target": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "cuda"}}},
-                "tuning": {"type": "object", "required": ["tuning_mode"],
-                           "properties": {"tuning_mode": {"const": "tune"}}}}},
-             "then": {"properties": {
-                 "target": {"required": list(_CUDA_DEVICE_LIMITS)},
-                 "tuning": {"properties": {"tuning_enable_cpu_cache_flush": {"enum": [None, False]}}}}}},
-        ])
+        schema.setdefault("allOf", []).extend(
+            [
+                {
+                    "if": {"required": ["target"], "properties": {"target": {"type": "object", "minProperties": 1}}},
+                    "then": {"properties": {"target_architecture": {"enum": [None, "auto", "cpu", "llvm"]}}},
+                },
+                {
+                    "if": {
+                        "required": ["target", "tuning"],
+                        "properties": {
+                            "target": {
+                                "type": "object",
+                                "required": ["kind"],
+                                "properties": {"kind": {"const": "cuda"}},
+                            },
+                            "tuning": {
+                                "type": "object",
+                                "required": ["tuning_mode"],
+                                "properties": {"tuning_mode": {"const": "tune"}},
+                            },
+                        },
+                    },
+                    "then": {
+                        "properties": {
+                            "target": {"required": list(_CUDA_DEVICE_LIMITS)},
+                            "tuning": {"properties": {"tuning_enable_cpu_cache_flush": {"enum": [None, False]}}},
+                        }
+                    },
+                },
+            ]
+        )
         return schema
 
     @model_validator(mode="before")
@@ -189,10 +208,5 @@ class RunSpecTvmRunCompile(RunSpecTvmRun):
         ):
             raise ValueError(f"{path}.mattr must be an array of strings")
         num_cores = target.get("num-cores")
-        if "num-cores" in target and (
-            isinstance(num_cores, bool) or not isinstance(num_cores, int) or num_cores < 1
-        ):
+        if "num-cores" in target and (isinstance(num_cores, bool) or not isinstance(num_cores, int) or num_cores < 1):
             raise ValueError(f"{path}.num-cores must be an integer greater than or equal to 1")
-
-
-RunValidatorTvmRunCompile = RunSpecTvmRunCompile

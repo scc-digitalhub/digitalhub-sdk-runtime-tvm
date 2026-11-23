@@ -6,43 +6,24 @@ import pytest
 from digitalhub.entities._constructors.spec import build_spec
 from pydantic import ValidationError
 
-from digitalhub_runtime_tvm.entities.function.tvm.spec import FunctionSpecTvm, FunctionValidatorTvm
-from digitalhub_runtime_tvm.entities.model.onnx.spec import ModelSpecOnnx, ModelValidatorOnnx
-from digitalhub_runtime_tvm.entities.model.tflite.spec import ModelSpecTflite, ModelValidatorTflite
+from digitalhub_runtime_tvm.entities._mixin.execution.spec import TvmBuildSpecMixin, TvmServeSpecMixin
+from digitalhub_runtime_tvm.entities.function.tvm.spec import FunctionSpecTvm
+from digitalhub_runtime_tvm.entities.model.onnx.spec import ModelSpecOnnx
 from digitalhub_runtime_tvm.entities.model.tvm.models import TensorSpec
-from digitalhub_runtime_tvm.entities.model.tvm.spec import ModelSpecTvm, ModelValidatorTvm
-from digitalhub_runtime_tvm.entities.model.tvm_ir.spec import ModelSpecTvmIr, ModelValidatorTvmIr
-from digitalhub_runtime_tvm.entities.model.tvm_so.spec import ModelSpecTvmSo, ModelValidatorTvmSo
-from digitalhub_runtime_tvm.entities.run._base.spec import RunSpecTvmRun, RunValidatorTvmRun
-from digitalhub_runtime_tvm.entities.run.build.spec import RunSpecTvmRunBuild, RunValidatorTvmRunBuild
+from digitalhub_runtime_tvm.entities.run.build.spec import RunSpecTvmRunBuild
 from digitalhub_runtime_tvm.entities.run.compile.models import TvmOptimization, TvmTuning
-from digitalhub_runtime_tvm.entities.run.compile.spec import RunSpecTvmRunCompile, RunValidatorTvmRunCompile
-from digitalhub_runtime_tvm.entities.run.serve.spec import RunSpecTvmRunServe, RunValidatorTvmRunServe
-from digitalhub_runtime_tvm.entities.task.build.spec import TaskSpecTvmBuild, TaskValidatorTvmBuild
-from digitalhub_runtime_tvm.entities.task.compile.spec import TaskSpecTvmCompile, TaskValidatorTvmCompile
-from digitalhub_runtime_tvm.entities.task.serve.spec import TaskSpecTvmServe, TaskValidatorTvmServe
+from digitalhub_runtime_tvm.entities.run.compile.spec import RunSpecTvmRunCompile
+from digitalhub_runtime_tvm.entities.run.serve.spec import RunSpecTvmRunServe
+from digitalhub_runtime_tvm.entities.task.build.spec import TaskSpecTvmBuild
+from digitalhub_runtime_tvm.entities.task.compile.spec import TaskSpecTvmCompile
+from digitalhub_runtime_tvm.entities.task.serve.spec import TaskSpecTvmServe
 
 
-@pytest.mark.parametrize(
-    ("compatibility_name", "spec_class"),
-    [
-        (FunctionValidatorTvm, FunctionSpecTvm),
-        (TaskValidatorTvmBuild, TaskSpecTvmBuild),
-        (TaskValidatorTvmServe, TaskSpecTvmServe),
-        (TaskValidatorTvmCompile, TaskSpecTvmCompile),
-        (RunValidatorTvmRun, RunSpecTvmRun),
-        (RunValidatorTvmRunBuild, RunSpecTvmRunBuild),
-        (RunValidatorTvmRunServe, RunSpecTvmRunServe),
-        (RunValidatorTvmRunCompile, RunSpecTvmRunCompile),
-        (ModelValidatorTvm, ModelSpecTvm),
-        (ModelValidatorTvmIr, ModelSpecTvmIr),
-        (ModelValidatorOnnx, ModelSpecOnnx),
-        (ModelValidatorTflite, ModelSpecTflite),
-        (ModelValidatorTvmSo, ModelSpecTvmSo),
-    ],
-)
-def test_validator_names_are_spec_aliases(compatibility_name, spec_class):
-    assert compatibility_name is spec_class
+def test_tvm_action_mixins_have_one_runtime_owner():
+    assert TvmBuildSpecMixin not in TaskSpecTvmBuild.__mro__
+    assert TvmBuildSpecMixin in RunSpecTvmRunBuild.__mro__
+    assert TvmServeSpecMixin not in TaskSpecTvmServe.__mro__
+    assert TvmServeSpecMixin in RunSpecTvmRunServe.__mro__
 
 
 @pytest.mark.parametrize(
@@ -54,10 +35,15 @@ def test_validator_names_are_spec_aliases(compatibility_name, spec_class):
     ],
 )
 def test_core_remote_run_responses_remain_readable(spec_class, action, options):
-    snapshot = {"task": f"tvm+{action}://test/task", "local_execution": False, **options}
+    snapshot = {
+        "function": "tvm://test/function:1",
+        "task": f"tvm+{action}://test/task",
+        "local_execution": False,
+        **options,
+    }
     parsed = spec_class.from_dict(snapshot)
 
-    assert parsed.to_dict() == {"task": snapshot["task"], "inputs": {}, **options}
+    assert parsed.to_dict() == {"function": "tvm://test/function:1", "task": snapshot["task"], "inputs": {}, **options}
     assert snapshot["local_execution"] is False
     with pytest.raises(ValueError, match="only remote execution"):
         spec_class.from_dict({**snapshot, "local_execution": True})
@@ -95,6 +81,7 @@ def test_tvm_compile_options_belong_to_the_run():
 def test_tvm_compile_run_groups_flat_options_and_validates_target():
     run = build_spec(
         RunSpecTvmRunCompile,
+        function="function",
         task="tvm+compile://task",
         target_architecture=" AMD64 ",
         opt_level=3,
@@ -112,6 +99,7 @@ def test_tvm_compile_run_groups_flat_options_and_validates_target():
 
     grouped = build_spec(
         RunSpecTvmRunCompile,
+        function="function",
         task="tvm+compile://task",
         opt_level=1,
         optimization={"opt_level": 2},
@@ -119,13 +107,28 @@ def test_tvm_compile_run_groups_flat_options_and_validates_target():
     assert grouped.optimization.opt_level == 2
 
     with pytest.raises(ValidationError):
-        build_spec(RunSpecTvmRunCompile, task="tvm+compile://task", opt_level=4)
+        build_spec(
+            RunSpecTvmRunCompile,
+            function="function",
+            task="tvm+compile://task",
+            opt_level=4,
+        )
 
     with pytest.raises(ValidationError):
-        build_spec(RunSpecTvmRunCompile, task="tvm+compile://task", target={"kind": "cuda"})
+        build_spec(
+            RunSpecTvmRunCompile,
+            function="function",
+            task="tvm+compile://task",
+            target={"kind": "cuda"},
+        )
 
     with pytest.raises(TypeError, match="unknown_option"):
-        build_spec(RunSpecTvmRunCompile, task="tvm+compile://task", unknown_option=True)
+        build_spec(
+            RunSpecTvmRunCompile,
+            function="function",
+            task="tvm+compile://task",
+            unknown_option=True,
+        )
 
 
 def test_tvm_option_models_keep_strict_config_and_sdk_serialization():
@@ -142,6 +145,7 @@ def test_tvm_option_models_keep_strict_config_and_sdk_serialization():
 def test_tvm_build_run_keeps_documented_run_options():
     run = build_spec(
         RunSpecTvmRunBuild,
+        function="function",
         task="tvm+build://task",
         simplify=True,
         target_opset=18,

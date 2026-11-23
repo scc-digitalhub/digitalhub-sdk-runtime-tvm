@@ -8,12 +8,12 @@ from pathlib import Path
 from unittest import mock
 
 import pytest
-from jsonschema import Draft202012Validator
 from digitalhub.entities._constructors.spec import build_spec
+from jsonschema import Draft202012Validator
 from pydantic import ValidationError
 
-from digitalhub_runtime_tvm.entities.function.tvm.spec import FunctionSpecTvm
 from digitalhub_runtime_tvm.entities.function.tvm.crud import new_function_tvm
+from digitalhub_runtime_tvm.entities.function.tvm.spec import FunctionSpecTvm
 from digitalhub_runtime_tvm.entities.model.tvm.models import TensorSpec
 from digitalhub_runtime_tvm.entities.run.compile.spec import RunSpecTvmRunCompile
 from digitalhub_runtime_tvm.entities.run.serve.spec import RunSpecTvmRunServe
@@ -22,6 +22,7 @@ from digitalhub_runtime_tvm.entities.task.serve.spec import TaskSpecTvmServe
 
 def test_serve_spec_round_trip():
     options = {
+        "function": "tvm://test/function:1",
         "task": "tvm+serve://test/task",
         "so_model_path": "store://test/model/tvm-so/model:version",
         "served_name": "model-1",
@@ -39,9 +40,12 @@ def test_serve_spec_round_trip():
 
 def test_serve_spec_does_not_invent_runtime_defaults():
     spec = RunSpecTvmRunServe(
-        task="tvm+serve://test/task", so_model_path="store://test/model/tvm-so/model:version"
+        function="tvm://test/function:1",
+        task="tvm+serve://test/task",
+        so_model_path="store://test/model/tvm-so/model:version",
     ).to_dict()
     assert spec == {
+        "function": "tvm://test/function:1",
         "task": "tvm+serve://test/task",
         "so_model_path": "store://test/model/tvm-so/model:version",
         "inputs": {},
@@ -54,12 +58,16 @@ def test_serve_spec_does_not_invent_runtime_defaults():
 )
 def test_serve_requires_a_versioned_compiled_model(so_model_path):
     with pytest.raises(ValidationError):
-        RunSpecTvmRunServe(task="tvm+serve://test/task", so_model_path=so_model_path)
+        RunSpecTvmRunServe(function="tvm://test/function:1", task="tvm+serve://test/task", so_model_path=so_model_path)
 
 
 def test_serve_cannot_use_a_legacy_function_or_run_reference():
     with pytest.raises(ValidationError):
-        RunSpecTvmRunServe(task="tvm+serve://test/task", so_model="store://test/model/tvm-so/model:old")
+        RunSpecTvmRunServe(
+            function="tvm://test/function:1",
+            task="tvm+serve://test/task",
+            so_model="store://test/model/tvm-so/model:old",
+        )
     assert "so_model" not in FunctionSpecTvm.model_fields
     assert "so_model" not in RunSpecTvmRunServe.model_fields
     assert "so_model_path" not in TaskSpecTvmServe.model_fields
@@ -71,6 +79,7 @@ def test_legacy_function_and_run_snapshots_remain_readable_without_mutation():
     assert "so_model" not in function.to_dict()
     assert source["so_model"] == "store://test/model/tvm-so/model:old"
     run = {
+        "function": "tvm://test/function:1",
         "task": "tvm+serve://test/task",
         "model_path": "store://test/model/tvm-so/model:chosen",
         "so_model": source["so_model"],
@@ -139,7 +148,12 @@ def test_model_selection_matches_the_core_export(so_model_path):
 def test_invalid_serve_options_are_rejected(field, value):
     with pytest.raises(ValidationError) as error:
         RunSpecTvmRunServe.model_validate(
-            {"task": "tvm+serve://test/task", "so_model_path": "store://test/model/tvm-so/model:version", field: value}
+            {
+                "function": "tvm://test/function:1",
+                "task": "tvm+serve://test/task",
+                "so_model_path": "store://test/model/tvm-so/model:version",
+                field: value,
+            }
         )
     assert error.value.errors()[0]["loc"] == (field,)
 
@@ -159,14 +173,21 @@ def test_tensor_signature_serialization_preserves_shape_and_quantization(shape):
     assert TensorSpec.model_validate_json(spec.model_dump_json()) == spec
 
 
-@pytest.mark.parametrize(("spec_cls", "kind", "field", "model_kind"), [
-    (RunSpecTvmRunCompile, "compile", "ir_model_path", "tvm-ir"),
-    (RunSpecTvmRunServe, "serve", "so_model_path", "tvm-so"),
-])
+@pytest.mark.parametrize(
+    ("spec_cls", "kind", "field", "model_kind"),
+    [
+        (RunSpecTvmRunCompile, "compile", "ir_model_path", "tvm-ir"),
+        (RunSpecTvmRunServe, "serve", "so_model_path", "tvm-so"),
+    ],
+)
 def test_legacy_path_serializes_with_phase_name(spec_cls, kind, field, model_kind):
     key = f"store://test/model/{model_kind}/model:v1"
-    legacy = {"task": f"tvm+{kind}://test/task", "model_path": key}
-    for parsed in (spec_cls.from_dict(legacy), build_spec(spec_cls, **legacy), build_spec(spec_cls, **legacy, **{field: key})):
+    legacy = {"function": "tvm://test/function:1", "task": f"tvm+{kind}://test/task", "model_path": key}
+    for parsed in (
+        spec_cls.from_dict(legacy),
+        build_spec(spec_cls, **legacy),
+        build_spec(spec_cls, **legacy, **{field: key}),
+    ):
         stored = parsed.to_dict()
         assert stored[field] == key
         assert "model_path" not in stored

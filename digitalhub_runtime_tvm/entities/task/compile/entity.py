@@ -9,8 +9,9 @@ import typing
 from digitalhub.entities.task._base.entity import Task
 
 if typing.TYPE_CHECKING:
+    from digitalhub.entities._base.entity.status import Status
+
     from digitalhub_runtime_tvm.entities.task.compile.spec import TaskSpecTvmCompile
-    from digitalhub_runtime_tvm.entities.task.compile.status import TaskStatusTvmCompile
 
 
 class TaskTvmCompile(Task):
@@ -22,4 +23,4 @@ class TaskTvmCompile(Task):
         super().__init__(*args, **kwargs)
 
         self.spec: TaskSpecTvmCompile
-        self.status: TaskStatusTvmCompile
+        self.status: Status

@@ -13,6 +13,3 @@ class ModelSpecTvmSo(ModelSpecTvm):
     target: str | None = None
     opt_level: int | None = None
     manifest: dict | None = None
-
-
-ModelValidatorTvmSo = ModelSpecTvmSo

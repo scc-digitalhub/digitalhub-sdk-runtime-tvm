@@ -14,6 +14,3 @@ class ModelSpecTflite(ModelSpec):
 
     inputs: list[TensorSpec] | None = None
     outputs: list[TensorSpec] | None = None
-
-
-ModelValidatorTflite = ModelSpecTflite

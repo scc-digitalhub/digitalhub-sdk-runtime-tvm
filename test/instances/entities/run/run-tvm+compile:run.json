@@ -15,7 +15,6 @@
   "spec": {
     "task": "tvm+compile://demo-etl/2a6c9e4f-5b7d-48a2-0c3e-9f1b7d8a2c54",
     "function": "tvm://demo-etl/func-tvm-git:7b5e0d4a-5e20-4f3e-8d5a-0e1c2f6d7a81",
-    "workflow": "workflow://demo-etl/mobilenet-pipeline:1",
     "volumes": [
       {
         "volume_type": "empty_dir",

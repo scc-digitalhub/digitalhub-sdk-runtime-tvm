@@ -12,13 +12,13 @@ from jsonschema import ValidationError as SchemaValidationError
 from jsonschema.validators import validator_for
 from pydantic import ValidationError
 
-from digitalhub_runtime_tvm.entities.run.compile.spec import RunSpecTvmRunCompile, RunValidatorTvmRunCompile
+from digitalhub_runtime_tvm.entities.run.compile.spec import RunSpecTvmRunCompile
 
 
 @pytest.fixture(scope="module", params=["sdk", "core"])
 def compile_schema(request):
     if request.param == "sdk":
-        schema = RunValidatorTvmRunCompile.model_json_schema()
+        schema = RunSpecTvmRunCompile.model_json_schema()
     else:
         root = Path(os.environ.get("TVM_CORE_SCHEMA_DIR", Path(__file__).parent / "instances" / "schemas"))
         path = root / "run" / "tvm+compile:run.json"
@@ -41,8 +41,12 @@ def cuda_target():
 
 
 def test_legacy_compile_snapshot_ignores_saved_function_model():
-    snapshot = {"task": "tvm+compile://test/task", "so_model": "store://test/model/tvm-so/model:old"}
-    expected = {"task": snapshot["task"], "inputs": {}}
+    snapshot = {
+        "function": "tvm://test/function:1",
+        "task": "tvm+compile://test/task",
+        "so_model": "store://test/model/tvm-so/model:old",
+    }
+    expected = {"function": "tvm://test/function:1", "task": snapshot["task"], "inputs": {}}
     assert RunSpecTvmRunCompile.model_validate(snapshot).to_dict() == expected
     assert RunSpecTvmRunCompile(**snapshot).to_dict() == expected
     assert "so_model" in snapshot
@@ -83,7 +87,7 @@ def test_cuda_compile_round_trip_preserves_target_options_and_job_settings(compi
     original = deepcopy(options)
     spec = RunSpecTvmRunCompile(**options).to_dict()
     assert spec == {**original, "inputs": {}}
-    assert RunValidatorTvmRunCompile.model_validate(spec).to_dict() == spec
+    assert RunSpecTvmRunCompile.model_validate(spec).to_dict() == spec
     assert RunSpecTvmRunCompile(**spec).to_dict() == spec
     assert options == original
     compile_schema.validate(spec)
@@ -154,7 +158,7 @@ def test_invalid_cuda_targets_are_rejected_by_validator_and_schema(path, value, 
     parent[path[-1]] = value
     options = {"task": "tvm+compile://test/task", "function": "tvm://test/function:1", "target": target}
     with pytest.raises(ValidationError):
-        RunValidatorTvmRunCompile.model_validate(options)
+        RunSpecTvmRunCompile.model_validate(options)
     with pytest.raises(SchemaValidationError) as error:
         compile_schema.validate(options)
     assert error.value.absolute_path[0] == "target"
@@ -169,7 +173,7 @@ def test_cuda_target_cannot_omit_device_or_host_details(path, compile_schema):
     del parent[path[-1]]
     options = {"task": "tvm+compile://test/task", "function": "tvm://test/function:1", "target": target}
     with pytest.raises(ValidationError):
-        RunValidatorTvmRunCompile.model_validate(options)
+        RunSpecTvmRunCompile.model_validate(options)
     with pytest.raises(SchemaValidationError) as error:
         compile_schema.validate(options)
     assert error.value.absolute_path[0] == "target"
@@ -178,8 +182,15 @@ def test_cuda_target_cannot_omit_device_or_host_details(path, compile_schema):
 @pytest.mark.parametrize("target", [{"kind": "llvm"}, cuda_target()])
 def test_explicit_targets_are_exclusive_with_configured_profiles(target):
     with pytest.raises(ValidationError, match="Use target or target_architecture"):
-        RunSpecTvmRunCompile(task="tvm+compile://test/task", target=target, target_architecture="jetson_orin_cuda")
-    spec = RunSpecTvmRunCompile(task="tvm+compile://test/task", target=target, target_architecture=" AUTO ").to_dict()
+        RunSpecTvmRunCompile(
+            function="tvm://test/function:1",
+            task="tvm+compile://test/task",
+            target=target,
+            target_architecture="jetson_orin_cuda",
+        )
+    spec = RunSpecTvmRunCompile(
+        function="tvm://test/function:1", task="tvm+compile://test/task", target=target, target_architecture=" AUTO "
+    ).to_dict()
     assert spec["target_architecture"] == "auto"
     assert spec["target"] == target
 
@@ -213,8 +224,8 @@ def test_invalid_cpu_target_options_keep_existing_validation(field, value):
         "target": {"kind": "llvm", field: value},
     }
     with pytest.raises(ValidationError):
-        RunValidatorTvmRunCompile.model_validate(options)
-    schema = RunValidatorTvmRunCompile.model_json_schema()
+        RunSpecTvmRunCompile.model_validate(options)
+    schema = RunSpecTvmRunCompile.model_json_schema()
     validator = validator_for(schema)(schema)
     with pytest.raises(SchemaValidationError) as error:
         validator.validate(options)
@@ -222,31 +233,49 @@ def test_invalid_cpu_target_options_keep_existing_validation(field, value):
 
 
 def test_configured_profile_names_remain_open_and_compile_defaults_are_not_invented():
-    options = {"task": "tvm+compile://test/task", "target_architecture": "  JETSON_ORIN_CUDA  "}
+    options = {
+        "function": "tvm://test/function:1",
+        "task": "tvm+compile://test/task",
+        "target_architecture": "  JETSON_ORIN_CUDA  ",
+    }
     assert RunSpecTvmRunCompile(**options).to_dict() == {
+        "function": "tvm://test/function:1",
         "task": options["task"],
         "inputs": {},
         "target_architecture": "jetson_orin_cuda",
     }
-    assert RunSpecTvmRunCompile(task=options["task"]).to_dict() == {"task": options["task"], "inputs": {}}
+    assert RunSpecTvmRunCompile(function="tvm://test/function:1", task=options["task"]).to_dict() == {
+        "function": "tvm://test/function:1",
+        "task": options["task"],
+        "inputs": {},
+    }
 
 
 @pytest.mark.parametrize("profile", ["auto", "cpu", "llvm"])
 def test_explicit_target_accepts_auto_aliases(profile, compile_schema):
-    spec = RunSpecTvmRunCompile(task="tvm+compile://test/task", function="tvm://test/function:1",
-                               target=cuda_target(), target_architecture=profile).to_dict()
+    spec = RunSpecTvmRunCompile(
+        task="tvm+compile://test/task",
+        function="tvm://test/function:1",
+        target=cuda_target(),
+        target_architecture=profile,
+    ).to_dict()
     compile_schema.validate(spec)
 
 
 @pytest.mark.parametrize("mode", ["off", "apply"])
 def test_inactive_tuning_values_survive_both_schemas(mode, compile_schema):
-    tuning = {"tuning_mode": mode, "tuning_trials": "dormant", "rpc_tracker_port": -1,
-              "tuning_model_path": "s3://test/database"}
-    spec = RunSpecTvmRunCompile(task="tvm+compile://test/task", function="tvm://test/function:1",
-                               tuning=tuning).to_dict()
+    tuning = {
+        "tuning_mode": mode,
+        "tuning_trials": "dormant",
+        "rpc_tracker_port": -1,
+        "tuning_model_path": "s3://test/database",
+    }
+    spec = RunSpecTvmRunCompile(
+        task="tvm+compile://test/task", function="tvm://test/function:1", tuning=tuning
+    ).to_dict()
     assert spec["tuning"] == tuning
     compile_schema.validate(spec)
-    schema = RunValidatorTvmRunCompile.model_json_schema()
+    schema = RunSpecTvmRunCompile.model_json_schema()
     validator_for(schema)(schema).validate(spec)
 
 
@@ -261,13 +290,15 @@ def test_active_cuda_tuning_rejected_consistently(change, compile_schema):
         tuning["tuning_enable_cpu_cache_flush"] = True
     else:
         tuning.update(tuning_runner="rpc", rpc_tracker_host="tracker", rpc_tracker_key="gpu", rpc_tracker_port=9190)
-        tuning["rpc_tracker_key" if change == "blank_rpc" else "rpc_tracker_port"] = "   " if change == "blank_rpc" else 65536
+        tuning["rpc_tracker_key" if change == "blank_rpc" else "rpc_tracker_port"] = (
+            "   " if change == "blank_rpc" else 65536
+        )
     spec = {"task": "tvm+compile://test/task", "function": "tvm://test/function:1", "target": target, "tuning": tuning}
     with pytest.raises(ValidationError):
-        RunValidatorTvmRunCompile.model_validate(spec)
+        RunSpecTvmRunCompile.model_validate(spec)
     with pytest.raises(SchemaValidationError):
         compile_schema.validate(spec)
-    schema = RunValidatorTvmRunCompile.model_json_schema()
+    schema = RunSpecTvmRunCompile.model_json_schema()
     with pytest.raises(SchemaValidationError):
         validator_for(schema)(schema).validate(spec)
 
@@ -276,7 +307,9 @@ def test_integral_cuda_numbers_are_normalized(compile_schema):
     target = cuda_target()
     target["thread_warp_size"] = 32.0
     target["host"]["num-cores"] = 4.0
-    spec = RunSpecTvmRunCompile(task="tvm+compile://test/task", function="tvm://test/function:1", target=target).to_dict()
+    spec = RunSpecTvmRunCompile(
+        task="tvm+compile://test/task", function="tvm://test/function:1", target=target
+    ).to_dict()
     assert type(spec["target"]["thread_warp_size"]) is int
     assert type(spec["target"]["host"]["num-cores"]) is int
     compile_schema.validate(spec)

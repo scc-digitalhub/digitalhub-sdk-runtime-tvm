@@ -7,6 +7,3 @@ from digitalhub_runtime_tvm.entities.task.spec import TvmTaskSpec
 
 class TaskSpecTvmCompile(TvmTaskSpec):
     """TVM compile task settings."""
-
-
-TaskValidatorTvmCompile = TaskSpecTvmCompile

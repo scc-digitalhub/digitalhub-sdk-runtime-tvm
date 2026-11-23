@@ -7,6 +7,3 @@ from digitalhub_runtime_tvm.entities.task.spec import TvmTaskSpec
 
 class TaskSpecTvmBuild(TvmTaskSpec):
     """TVM build task settings."""
-
-
-TaskValidatorTvmBuild = TaskSpecTvmBuild

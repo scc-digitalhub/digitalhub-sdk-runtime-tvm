@@ -15,6 +15,3 @@ class ModelSpecTvm(ModelSpec):
     entry: str | None = None
     inputs: list[TensorSpec] | None = None
     outputs: list[TensorSpec] | None = None
-
-
-ModelValidatorTvm = ModelSpecTvm

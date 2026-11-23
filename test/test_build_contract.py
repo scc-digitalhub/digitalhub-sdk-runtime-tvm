@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from jsonschema.validators import validator_for
 
-from digitalhub_runtime_tvm.entities.run.build.spec import RunSpecTvmRunBuild, RunValidatorTvmRunBuild
+from digitalhub_runtime_tvm.entities.run.build.spec import RunSpecTvmRunBuild
 
 
 @pytest.mark.parametrize("sort", [None, False, True])
@@ -21,7 +21,7 @@ def test_build_flags_round_trip_independently(sort, simplify):
         options["simplify"] = simplify
     spec = RunSpecTvmRunBuild(**options).to_dict()
     assert spec == {**options, "inputs": {}}
-    assert RunValidatorTvmRunBuild.model_validate(spec).to_dict() == spec
+    assert RunSpecTvmRunBuild.model_validate(spec).to_dict() == spec
     assert RunSpecTvmRunBuild(**spec).to_dict() == spec
 
     schema_dir = os.environ.get("TVM_CORE_SCHEMA_DIR")
@@ -34,4 +34,4 @@ def test_build_flags_round_trip_independently(sort, simplify):
 
 
 def test_build_sort_option_is_declared_in_sdk_schema():
-    assert RunValidatorTvmRunBuild.model_json_schema()["properties"].get("sort_onnx")
+    assert RunSpecTvmRunBuild.model_json_schema()["properties"].get("sort_onnx")

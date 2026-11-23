@@ -2,10 +2,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from digitalhub.entities.run._base.spec import RunSpec
+from digitalhub.entities.run._base.spec import RunSpecFunction
 from pydantic import Field, field_validator, model_validator
 
-from digitalhub_runtime_tvm.entities.function.tvm.spec import TvmFormat
+from digitalhub_runtime_tvm.entities._commons.models import TvmFormat
 
 
 def normalize_model_path(data: dict, field: str) -> dict:
@@ -19,7 +19,7 @@ def normalize_model_path(data: dict, field: str) -> dict:
     return normalized
 
 
-class RunSpecTvmRun(RunSpec):
+class RunSpecTvmRun(RunSpecFunction):
     """
     Tvm run specifications.
     """
@@ -48,6 +48,3 @@ class RunSpecTvmRun(RunSpec):
     @classmethod
     def default_inputs(cls, value):
         return {} if value is None else value
-
-
-RunValidatorTvmRun = RunSpecTvmRun

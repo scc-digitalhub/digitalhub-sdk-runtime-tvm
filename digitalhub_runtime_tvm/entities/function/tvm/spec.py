@@ -4,12 +4,10 @@
 
 from __future__ import annotations
 
-from typing import Literal
-
 from digitalhub.entities._base.entity.spec import Spec
 from pydantic import Field, model_validator
 
-TvmFormat = Literal["auto", "onnx", "tflite"]
+from digitalhub_runtime_tvm.entities._commons.models import TvmFormat
 
 
 class FunctionSpecTvm(Spec):
@@ -32,6 +30,3 @@ class FunctionSpecTvm(Spec):
         if isinstance(data, dict) and "so_model" in data:
             data = {key: value for key, value in data.items() if key != "so_model"}
         return data
-
-
-FunctionValidatorTvm = FunctionSpecTvm
