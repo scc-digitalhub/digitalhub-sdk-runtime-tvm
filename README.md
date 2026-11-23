@@ -27,8 +27,8 @@ Use this extension with CORE 0.16's Run specs:
 | Function    | Source `model`, `format`; generated `ir_model` reference                                       |
 | Task        | `function`, `resources`, `profile`, `envs`, `secrets`, `volumes`                            |
 | Build Run   | `image` and ONNX conversion options                                                         |
-| Compile Run | `model_path`, `target_architecture` or `target`, `tag`, `image`, `optimization`, `tuning`   |
-| Serve Run   | `model_path`, `served_name`, `image`, `replicas`, `workers`, `service_type`, `service_name` |
+| Compile Run | `ir_model_path`, `target_architecture` or `target`, `tag`, `image`, `optimization`, `tuning`   |
+| Serve Run   | `so_model_path`, `served_name`, `image`, `replicas`, `workers`, `service_type`, `service_name` |
 
 Pass TVM options to each Run; old Task options and previous Runs do not provide
 defaults. Common Task settings can be overridden for one Run.
@@ -50,12 +50,15 @@ compiled = function.run(
 )
 function.run(
     "serve",
-    model_path=compiled.status.to_dict()["outputs"]["compiled_so"],
+    so_model_path=compiled.status.to_dict()["outputs"]["compiled_so"],
     served_name="xinet",
     workers=1,
     resources={"cpu": "4", "mem": "2Gi"},
 )
 ```
+
+For older Runs, `model_path` is read as `ir_model_path` on Compile and
+as `so_model_path` on Serve. New requests should use the phase-specific name.
 
 Build options include `image`, `sort_onnx`, `simplify`, `target_opset`, `opset_override`,
 `strict_shape_inference`, `data_prop`, `keep_params_in_input` and `sanitize_input_names`.
@@ -65,8 +68,8 @@ dependencies. It is independent of `simplify`. With sorting disabled, ONNX valid
 remains enabled and rejects unordered graphs. The source ONNX Model is preserved;
 the build publishes the converted TVM IR rather than a separate sorted ONNX Model.
 
-Compile accepts `model_path` to override `function.ir_model`; serve requires a
-versioned `model_path` from the chosen Compile's `status.outputs.compiled_so`.
+Compile accepts `ir_model_path` to override `function.ir_model`; serve requires a
+versioned `so_model_path` from the chosen Compile's `status.outputs.compiled_so`.
 Other serve options are `served_name`, `image`,
 `replicas`, `workers`, `service_type` and `service_name`.
 
@@ -77,7 +80,7 @@ explicit grouped values take precedence. Omitted values use CORE defaults.
 CORE saves only the build's `ir_model` reference on the Function. Each Compile keeps
 its own output, so compiling for another architecture does not change the Model
 selected by a Serve. Legacy Function `so_model` values are ignored; a new Serve
-without `model_path` is rejected. Existing services retain their selected Model.
+without `so_model_path` is rejected. Existing services retain their selected Model.
 
 ### CPU profiles and explicit targets
 

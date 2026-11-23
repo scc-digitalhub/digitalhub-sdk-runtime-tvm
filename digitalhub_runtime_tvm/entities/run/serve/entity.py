@@ -9,8 +9,9 @@ import typing
 from digitalhub_runtime_tvm.entities.run._base.entity import RunTvmRun
 
 if typing.TYPE_CHECKING:
+    from digitalhub.entities.run._base.status import RunStatus
+
     from digitalhub_runtime_tvm.entities.run.serve.spec import RunSpecTvmRunServe
-    from digitalhub_runtime_tvm.entities.run.serve.status import RunStatusTvmRunServe
 
 
 class RunTvmRunServe(RunTvmRun):
@@ -22,4 +23,4 @@ class RunTvmRunServe(RunTvmRun):
         super().__init__(*args, **kwargs)
 
         self.spec: RunSpecTvmRunServe
-        self.status: RunStatusTvmRunServe
+        self.status: RunStatus

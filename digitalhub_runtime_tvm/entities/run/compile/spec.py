@@ -7,7 +7,7 @@ from typing import ClassVar
 
 from pydantic import Field, field_validator, model_validator
 
-from digitalhub_runtime_tvm.entities.run._base.spec import RunSpecTvmRun
+from digitalhub_runtime_tvm.entities.run._base.spec import RunSpecTvmRun, normalize_model_path
 from digitalhub_runtime_tvm.entities.run.compile.models import TvmOptimization, TvmTuning
 
 
@@ -30,7 +30,7 @@ class RunSpecTvmRunCompile(RunSpecTvmRun):
     ALLOW_EXTRA_INPUTS: ClassVar[bool] = True
     FLAT_OPTION_FIELDS: ClassVar[set[str]] = set(TvmOptimization.model_fields) | set(TvmTuning.model_fields)
 
-    model_path: str | None = None
+    ir_model_path: str | None = None
     target_architecture: str | None = Field(
         default=None, json_schema_extra={"title": "Target profile", "default": "auto"}
     )
@@ -75,6 +75,7 @@ class RunSpecTvmRunCompile(RunSpecTvmRun):
     image: str | None = None
 
     def __init__(self, **data) -> None:
+        data = normalize_model_path(data, "ir_model_path")
         data.pop("so_model", None)
         allowed_fields = set(type(self).model_fields) | type(self).FLAT_OPTION_FIELDS
         allowed_fields.update(field.alias for field in type(self).model_fields.values() if isinstance(field.alias, str))
@@ -128,38 +129,46 @@ class RunSpecTvmRunCompile(RunSpecTvmRun):
 
     @model_validator(mode="after")
     def validate_target(self):
-        if self.target:
-            if self.target_architecture not in (None, "auto", "cpu", "llvm"):
-                raise ValueError("Use target or target_architecture, not both; leave the profile at auto")
-            kind = self.target.get("kind")
-            if kind not in ("llvm", "cuda"):
-                raise ValueError("target.kind must be llvm or cuda")
-            self._validate_llvm_options(self.target, "target")
-            if kind == "cuda":
-                arch = self.target.get("arch")
-                if not isinstance(arch, str) or re.fullmatch(_CUDA_ARCH_PATTERN, arch) is None:
-                    raise ValueError("target.arch must be an explicit CUDA architecture such as sm_87")
-                host = self.target.get("host")
-                if not isinstance(host, dict) or host.get("kind") != "llvm":
-                    raise ValueError("target.host must be an LLVM target object with kind=llvm")
-                triple = host.get("mtriple")
-                if not isinstance(triple, str) or re.fullmatch(_CUDA_HOST_TRIPLE_PATTERN, triple) is None:
-                    raise ValueError("target.host.mtriple must be an explicit Linux GNU AMD64 or ARM64 triple")
-                host = dict(host)
-                self.target["host"] = host
-                if "num-cores" in host:
-                    host["num-cores"] = self._positive_integer(host["num-cores"], "target.host.num-cores")
-                self._validate_llvm_options(host, "target.host")
-                for name in _CUDA_DEVICE_LIMITS:
-                    if name in self.target:
-                        self.target[name] = self._positive_integer(self.target[name], f"target.{name}")
-                if self.tuning is not None and self.tuning.tuning_mode == "tune":
-                    if self.tuning.tuning_enable_cpu_cache_flush:
-                        raise ValueError("tuning_enable_cpu_cache_flush is not supported for CUDA tuning")
-                    for name in _CUDA_DEVICE_LIMITS:
-                        if name not in self.target:
-                            raise ValueError(f"CUDA tuning requires target.{name} from the real device")
+        target = self.target
+        if not target:
+            return self
+
+        if self.target_architecture not in (None, "auto", "cpu", "llvm"):
+            raise ValueError("Use target or target_architecture, not both; leave the profile at auto")
+        kind = target.get("kind")
+        if kind not in ("llvm", "cuda"):
+            raise ValueError("target.kind must be llvm or cuda")
+        self._validate_llvm_options(target, "target")
+        if kind == "cuda":
+            self._validate_cuda_target(target)
         return self
+
+    def _validate_cuda_target(self, target: dict) -> None:
+        arch = target.get("arch")
+        if not isinstance(arch, str) or re.fullmatch(_CUDA_ARCH_PATTERN, arch) is None:
+            raise ValueError("target.arch must be an explicit CUDA architecture such as sm_87")
+        host = target.get("host")
+        if not isinstance(host, dict) or host.get("kind") != "llvm":
+            raise ValueError("target.host must be an LLVM target object with kind=llvm")
+        triple = host.get("mtriple")
+        if not isinstance(triple, str) or re.fullmatch(_CUDA_HOST_TRIPLE_PATTERN, triple) is None:
+            raise ValueError("target.host.mtriple must be an explicit Linux GNU AMD64 or ARM64 triple")
+        host = dict(host)
+        target["host"] = host
+        if "num-cores" in host:
+            host["num-cores"] = self._positive_integer(host["num-cores"], "target.host.num-cores")
+        self._validate_llvm_options(host, "target.host")
+        for name in _CUDA_DEVICE_LIMITS:
+            if name in target:
+                target[name] = self._positive_integer(target[name], f"target.{name}")
+
+        if self.tuning is None or self.tuning.tuning_mode != "tune":
+            return
+        if self.tuning.tuning_enable_cpu_cache_flush:
+            raise ValueError("tuning_enable_cpu_cache_flush is not supported for CUDA tuning")
+        for name in _CUDA_DEVICE_LIMITS:
+            if name not in target:
+                raise ValueError(f"CUDA tuning requires target.{name} from the real device")
 
     @staticmethod
     def _positive_integer(value, path: str) -> int:
@@ -186,5 +195,4 @@ class RunSpecTvmRunCompile(RunSpecTvmRun):
             raise ValueError(f"{path}.num-cores must be an integer greater than or equal to 1")
 
 
-class RunValidatorTvmRunCompile(RunSpecTvmRunCompile):
-    """Compatibility name for the typed TVM compile-run spec."""
+RunValidatorTvmRunCompile = RunSpecTvmRunCompile

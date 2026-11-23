@@ -9,8 +9,9 @@ import typing
 from digitalhub.entities.function._base.entity import Function
 
 if typing.TYPE_CHECKING:
+    from digitalhub.entities._base.entity.status import Status
+
     from digitalhub_runtime_tvm.entities.function.tvm.spec import FunctionSpecTvm
-    from digitalhub_runtime_tvm.entities.function.tvm.status import FunctionStatusTvm
 
 
 class FunctionTvm(Function):
@@ -22,4 +23,4 @@ class FunctionTvm(Function):
         super().__init__(*args, **kwargs)
 
         self.spec: FunctionSpecTvm
-        self.status: FunctionStatusTvm
+        self.status: Status

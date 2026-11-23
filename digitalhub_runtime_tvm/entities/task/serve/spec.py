@@ -2,25 +2,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from digitalhub.entities._base.entity.spec import Spec
-from digitalhub.entities.task._base.models import CoreServiceType
-from digitalhub.entities.task._base.spec import TaskSpecFunction
-from pydantic import Field
+from digitalhub_runtime_tvm.entities.task.spec import TvmTaskSpec
 
 
-class TvmServeSpecMixin(Spec):
-    model_path: str | None = Field(default=None, pattern=r"^(store://[^/]+/model/[^/]+/[^:]+(:.+)?)?$")
-    served_name: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9])?$")
-    image: str | None = None
-    replicas: int | None = Field(default=None, ge=0)
-    workers: int | None = Field(default=None, ge=1)
-    service_type: CoreServiceType | None = Field(default=None, json_schema_extra={"default": "ClusterIP"})
-    service_name: str | None = None
+class TaskSpecTvmServe(TvmTaskSpec):
+    """TVM serve task settings."""
 
 
-class TaskSpecTvmServe(TaskSpecFunction, TvmServeSpecMixin):
-    """Common task settings and TVM serve options."""
-
-
-class TaskValidatorTvmServe(TaskSpecTvmServe):
-    """Compatibility name for the typed TVM serve-task spec."""
+TaskValidatorTvmServe = TaskSpecTvmServe

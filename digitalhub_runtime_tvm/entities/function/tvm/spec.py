@@ -6,13 +6,13 @@ from __future__ import annotations
 
 from typing import Literal
 
-from digitalhub.entities.function._base.spec import FunctionSpec
+from digitalhub.entities._base.entity.spec import Spec
 from pydantic import Field, model_validator
 
 TvmFormat = Literal["auto", "onnx", "tflite"]
 
 
-class FunctionSpecTvm(FunctionSpec):
+class FunctionSpecTvm(Spec):
     """
     FunctionTvm specifications.
     """
@@ -34,5 +34,4 @@ class FunctionSpecTvm(FunctionSpec):
         return data
 
 
-class FunctionValidatorTvm(FunctionSpecTvm):
-    """Compatibility name for the typed TVM function spec."""
+FunctionValidatorTvm = FunctionSpecTvm

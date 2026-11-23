@@ -16,5 +16,4 @@ class ModelSpecTflite(ModelSpec):
     outputs: list[TensorSpec] | None = None
 
 
-class ModelValidatorTflite(ModelSpecTflite):
-    """Compatibility name for the typed TFLite model spec."""
+ModelValidatorTflite = ModelSpecTflite

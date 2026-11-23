@@ -19,5 +19,4 @@ class ModelSpecTvmIr(ModelSpecTvm):
     sanitize_input_names: bool | None = None
 
 
-class ModelValidatorTvmIr(ModelSpecTvmIr):
-    """Compatibility name for the typed TVM IR model spec."""
+ModelValidatorTvmIr = ModelSpecTvmIr
