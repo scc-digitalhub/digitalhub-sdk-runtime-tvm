@@ -20,10 +20,33 @@ from digitalhub_runtime_tvm.entities.task.serve.spec import TaskSpecTvmServe
 
 
 def test_tvm_action_mixins_have_one_runtime_owner():
-    assert TvmBuildSpecMixin in TaskSpecTvmBuild.__mro__
+    assert TvmBuildSpecMixin not in TaskSpecTvmBuild.__mro__
     assert TvmBuildSpecMixin in RunSpecTvmRunBuild.__mro__
-    assert TvmServeSpecMixin in TaskSpecTvmServe.__mro__
+    assert TvmServeSpecMixin not in TaskSpecTvmServe.__mro__
     assert TvmServeSpecMixin in RunSpecTvmRunServe.__mro__
+
+
+@pytest.mark.parametrize(
+    ("spec_class", "action", "options"),
+    [
+        (RunSpecTvmRunBuild, "build", {}),
+        (RunSpecTvmRunCompile, "compile", {"ir_model_path": "store://test/model/tvm-ir/model:v1"}),
+        (RunSpecTvmRunServe, "serve", {"so_model_path": "store://test/model/tvm-so/model:v1"}),
+    ],
+)
+def test_core_remote_run_responses_remain_readable(spec_class, action, options):
+    snapshot = {
+        "function": "tvm://test/function:1",
+        "task": f"tvm+{action}://test/task",
+        "local_execution": False,
+        **options,
+    }
+    parsed = spec_class.from_dict(snapshot)
+
+    assert parsed.to_dict() == {"function": "tvm://test/function:1", "task": snapshot["task"], "inputs": {}, **options}
+    assert snapshot["local_execution"] is False
+    with pytest.raises(ValueError, match="only remote execution"):
+        spec_class.from_dict({**snapshot, "local_execution": True})
 
 
 def test_tvm_function_and_model_specs_use_typed_fields():
@@ -44,14 +67,15 @@ def test_tvm_function_and_model_specs_use_typed_fields():
         build_spec(ModelSpecOnnx, path="model", opset=0)
 
 
-def test_tvm_task_spec_preserves_compile_constraints():
-    task = build_spec(TaskSpecTvmCompile, function="function", opt_level=3, tuning_trials=1)
+def test_tvm_compile_options_belong_to_the_run():
+    historical = {"function": "function", "opt_level": 3, "tuning_trials": 1}
+    task = TaskSpecTvmCompile.from_dict(historical)
+    assert task.function == "function"
+    assert "opt_level" not in task.to_dict()
+    assert historical["opt_level"] == 3
 
-    assert task.opt_level == 3
-    assert task.tuning_trials == 1
-
-    with pytest.raises(ValidationError):
-        build_spec(TaskSpecTvmCompile, function="function", opt_level=4)
+    with pytest.raises(TypeError, match="opt_level"):
+        build_spec(TaskSpecTvmCompile, **historical)
 
 
 def test_tvm_compile_run_groups_flat_options_and_validates_target():

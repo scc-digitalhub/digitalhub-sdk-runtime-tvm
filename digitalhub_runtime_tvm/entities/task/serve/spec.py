@@ -2,10 +2,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from digitalhub.entities.task._base.spec import TaskSpecFunction
-
-from digitalhub_runtime_tvm.entities._mixin.execution.spec import TvmServeSpecMixin
+from digitalhub_runtime_tvm.entities.task.spec import TvmTaskSpec
 
 
-class TaskSpecTvmServe(TaskSpecFunction, TvmServeSpecMixin):
-    """Common task settings and TVM serve options."""
+class TaskSpecTvmServe(TvmTaskSpec):
+    """TVM serve task settings."""

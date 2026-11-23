@@ -15,7 +15,6 @@
   "spec": {
     "task": "tvm+build://demo-etl/1f5b8c3d-4a6e-47f1-9b2c-8d0e6a7f9b21",
     "function": "tvm://demo-etl/func-tvm-git:7b5e0d4a-5e20-4f3e-8d5a-0e1c2f6d7a81",
-    "workflow": "workflow://demo-etl/mobilenet-pipeline:1",
     "volumes": [
       {
         "volume_type": "empty_dir",
@@ -44,8 +43,8 @@
     },
     "format": "onnx",
     "ir_model": "store://demo-etl/model/mobilenet-relax:6c8b8bf5-1b63-46de-9e63-bdfc1b9c9d2f",
-    "so_model": "store://demo-etl/model/mobilenet-so:3c90b7c7-9f8d-40ab-9e94-6f8e5c6d2a10",
     "image": "ghcr.io/scc-digitalhub/tvm-toolkit:0.26.0",
+    "sort_onnx": false,
     "simplify": true,
     "target_opset": 17,
     "opset_override": 17,

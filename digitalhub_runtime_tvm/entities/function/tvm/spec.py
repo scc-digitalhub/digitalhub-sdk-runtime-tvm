@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 from digitalhub.entities._base.entity.spec import Spec
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from digitalhub_runtime_tvm.entities._commons.models import TvmFormat
 
@@ -24,5 +24,9 @@ class FunctionSpecTvm(Spec):
     ir_model: str | None = None
     """Store key of the Relax IR model produced by build."""
 
-    so_model: str | None = None
-    """Store key of the compiled model.so produced by compile."""
+    @model_validator(mode="before")
+    @classmethod
+    def ignore_legacy_compiled_model(cls, data):
+        if isinstance(data, dict) and "so_model" in data:
+            data = {key: value for key, value in data.items() if key != "so_model"}
+        return data
