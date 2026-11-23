@@ -2,6 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from digitalhub.entities._base.entity.status import Status
+from typing import Literal
 
-TaskStatusTvmBuild = Status
+TvmFormat = Literal["auto", "onnx", "tflite"]

@@ -16,6 +16,3 @@ class ModelSpecOnnx(ModelSpec):
     inputs: list[TensorSpec] | None = None
     outputs: list[TensorSpec] | None = None
     opset: int | None = Field(default=None, ge=1)
-
-
-ModelValidatorOnnx = ModelSpecOnnx

@@ -17,6 +17,3 @@ class ModelSpecTvmIr(ModelSpecTvm):
     source_format: TvmSourceFormat | None = None
     keep_params_in_input: bool | None = None
     sanitize_input_names: bool | None = None
-
-
-ModelValidatorTvmIr = ModelSpecTvmIr

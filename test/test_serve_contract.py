@@ -11,6 +11,7 @@ from digitalhub_runtime_tvm.entities.run.serve.spec import RunSpecTvmRunServe
 
 def test_serve_spec_round_trip():
     options = {
+        "function": "function",
         "task": "tvm+serve://test/task",
         "model_path": "store://test/model/tvm-so/model:version",
         "served_name": "model-1",
@@ -27,8 +28,8 @@ def test_serve_spec_round_trip():
 
 
 def test_serve_spec_does_not_invent_runtime_defaults():
-    spec = RunSpecTvmRunServe(task="tvm+serve://test/task").to_dict()
-    assert spec == {"task": "tvm+serve://test/task", "inputs": {}}
+    spec = RunSpecTvmRunServe(function="function", task="tvm+serve://test/task").to_dict()
+    assert spec == {"function": "function", "task": "tvm+serve://test/task", "inputs": {}}
     assert RunSpecTvmRunServe.model_validate(spec).model_dump(mode="json", exclude_none=True) == spec
 
 
@@ -47,7 +48,7 @@ def test_serve_spec_does_not_invent_runtime_defaults():
 )
 def test_invalid_serve_options_are_rejected(field, value):
     with pytest.raises(ValidationError) as error:
-        RunSpecTvmRunServe.model_validate({"task": "tvm+serve://test/task", field: value})
+        RunSpecTvmRunServe.model_validate({"function": "function", "task": "tvm+serve://test/task", field: value})
     assert error.value.errors()[0]["loc"] == (field,)
 
 

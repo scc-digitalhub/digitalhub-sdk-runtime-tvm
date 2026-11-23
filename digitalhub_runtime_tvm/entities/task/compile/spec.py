@@ -49,6 +49,3 @@ class TaskSpecTvmCompile(TaskSpecFunction):
     rpc_tracker_key: str | None = None
     rpc_session_timeout_sec: int | None = Field(default=None, ge=1, json_schema_extra={"default": 60})
     allow_partial_tuning: bool | None = Field(default=None, json_schema_extra={"default": False})
-
-
-TaskValidatorTvmCompile = TaskSpecTvmCompile

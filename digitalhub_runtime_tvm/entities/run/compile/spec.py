@@ -97,6 +97,3 @@ class RunSpecTvmRunCompile(RunSpecTvmRun):
             ):
                 raise ValueError("target.num-cores must be an integer greater than or equal to 1")
         return self
-
-
-RunValidatorTvmRunCompile = RunSpecTvmRunCompile

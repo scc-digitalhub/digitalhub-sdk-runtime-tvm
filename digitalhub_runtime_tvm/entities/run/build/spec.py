@@ -2,14 +2,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+from digitalhub_runtime_tvm.entities._mixin.execution.spec import TvmBuildSpecMixin
 from digitalhub_runtime_tvm.entities.run._base.spec import RunSpecTvmRun
-from digitalhub_runtime_tvm.entities.task.build.spec import TvmBuildSpecMixin
 
 
 class RunSpecTvmRunBuild(RunSpecTvmRun, TvmBuildSpecMixin):
     """
     Tvm build run specifications.
     """
-
-
-RunValidatorTvmRunBuild = RunSpecTvmRunBuild

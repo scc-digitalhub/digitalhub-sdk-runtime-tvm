@@ -2,23 +2,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from digitalhub.entities._base.entity.spec import Spec
 from digitalhub.entities.task._base.spec import TaskSpecFunction
 
-
-class TvmBuildSpecMixin(Spec):
-    image: str | None = None
-    simplify: bool | None = None
-    target_opset: int | None = None
-    opset_override: int | None = None
-    strict_shape_inference: bool | None = None
-    data_prop: bool | None = None
-    keep_params_in_input: bool | None = None
-    sanitize_input_names: bool | None = None
+from digitalhub_runtime_tvm.entities._mixin.execution.spec import TvmBuildSpecMixin
 
 
 class TaskSpecTvmBuild(TaskSpecFunction, TvmBuildSpecMixin):
     """Common task settings and TVM build options."""
-
-
-TaskValidatorTvmBuild = TaskSpecTvmBuild

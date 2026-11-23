@@ -4,12 +4,10 @@
 
 from __future__ import annotations
 
-from typing import Literal
-
 from digitalhub.entities._base.entity.spec import Spec
 from pydantic import Field
 
-TvmFormat = Literal["auto", "onnx", "tflite"]
+from digitalhub_runtime_tvm.entities._commons.models import TvmFormat
 
 
 class FunctionSpecTvm(Spec):
@@ -28,6 +26,3 @@ class FunctionSpecTvm(Spec):
 
     so_model: str | None = None
     """Store key of the compiled model.so produced by compile."""
-
-
-FunctionValidatorTvm = FunctionSpecTvm
