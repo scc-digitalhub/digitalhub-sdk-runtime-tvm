@@ -8,8 +8,8 @@ import typing
 
 from digitalhub.entities.function.crud import new_function
 
+from digitalhub_runtime_tvm.entities._commons.enums import EntityKinds
 from digitalhub_runtime_tvm.entities._commons.models import TvmFormat
-from digitalhub_runtime_tvm.entities.function.tvm.builder import FunctionTvmBuilder
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_tvm.entities.function.tvm.entity import FunctionTvm
@@ -51,7 +51,7 @@ def new_function_tvm(
     return new_function(
         project=project,
         name=name,
-        kind=FunctionTvmBuilder.ENTITY_KIND,
+        kind=EntityKinds.FUNCTION_TVM.value,
         uuid=uuid,
         version=version,
         description=description,
