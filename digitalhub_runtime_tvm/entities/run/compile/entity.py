@@ -9,7 +9,7 @@ import typing
 from digitalhub_runtime_tvm.entities.run._base.entity import RunTvmRun
 
 if typing.TYPE_CHECKING:
-    from digitalhub.entities.run._base.status import RunStatus
+    from digitalhub.plugins import RunStatus
 
     from digitalhub_runtime_tvm.entities.run.compile.spec import RunSpecTvmRunCompile
 

@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest import mock
 
 import pytest
-from digitalhub.entities._constructors.spec import build_spec
+from digitalhub.plugins import build_spec
 from jsonschema import Draft202012Validator
 from pydantic import ValidationError
 

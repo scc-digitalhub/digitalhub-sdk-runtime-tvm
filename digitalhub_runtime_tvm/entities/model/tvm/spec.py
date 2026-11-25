@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from digitalhub.entities.model._base.spec import ModelSpec
+from digitalhub.plugins import ModelSpec
 
 from digitalhub_runtime_tvm.entities.model.tvm.models import TensorSpec
 

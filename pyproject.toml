@@ -32,6 +32,9 @@ dev = [
     "regex",
 ]
 
+[project.entry-points."digitalhub.runtimes"]
+tvm = "digitalhub_runtime_tvm:entity_plugins"
+
 [project.urls]
 Homepage = "https://github.com/scc-digitalhub/digitalhub-sdk-runtime-tvm"
 

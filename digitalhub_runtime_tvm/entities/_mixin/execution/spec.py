@@ -2,8 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from digitalhub.entities._base.entity.spec import Spec
-from digitalhub.entities._frameworks.k8s.models import CoreServiceType
+from digitalhub.plugins import CoreServiceType, Spec
 from pydantic import Field
 
 

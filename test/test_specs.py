@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import pytest
-from digitalhub.entities._constructors.spec import build_spec
+from digitalhub.plugins import build_spec
 from pydantic import ValidationError
 
 from digitalhub_runtime_tvm.entities._mixin.execution.spec import TvmBuildSpecMixin, TvmServeSpecMixin

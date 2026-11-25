@@ -6,10 +6,10 @@ from __future__ import annotations
 
 import typing
 
-from digitalhub.entities.model._base.entity import Model
+from digitalhub.plugins import Model
 
 if typing.TYPE_CHECKING:
-    from digitalhub.entities.model._base.status import ModelStatus
+    from digitalhub.plugins import ModelStatus
 
     from digitalhub_runtime_tvm.entities.model.tvm.spec import ModelSpecTvm
 

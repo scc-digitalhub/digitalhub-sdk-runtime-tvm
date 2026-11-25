@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import typing
 
-from digitalhub.entities.model._base.crud import log_base_model, register_base_model
+from digitalhub.plugins import log_base_model, register_base_model
 from digitalhub.utils.types import SourcesOrListOfSources
 
 from digitalhub_runtime_tvm.entities._commons.enums import EntityKinds

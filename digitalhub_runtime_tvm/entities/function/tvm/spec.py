@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from digitalhub.entities._base.entity.spec import Spec
+from digitalhub.plugins import Spec
 from pydantic import Field, model_validator
 
 from digitalhub_runtime_tvm.entities._commons.models import TvmFormat

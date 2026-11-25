@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from digitalhub.entities.task._base.spec import TaskSpecFunction
+from digitalhub.plugins import TaskSpecFunction
 from pydantic import ConfigDict
 
 

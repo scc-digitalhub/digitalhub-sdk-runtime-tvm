@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from digitalhub.entities.run._base.spec import RunSpecFunction
+from digitalhub.plugins import RunSpecFunction
 from pydantic import Field, field_validator, model_validator
 
 from digitalhub_runtime_tvm.entities._commons.models import TvmFormat

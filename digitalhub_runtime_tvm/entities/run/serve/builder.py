@@ -4,8 +4,7 @@
 
 from __future__ import annotations
 
-from digitalhub.entities.run._base.builder import RunBuilder
-from digitalhub.entities.run._base.status import RunStatus
+from digitalhub.plugins import RunBuilder, RunStatus
 
 from digitalhub_runtime_tvm.entities._base.runtime_entity.builder import RuntimeEntityBuilderTvm
 from digitalhub_runtime_tvm.entities._commons.enums import EntityKinds

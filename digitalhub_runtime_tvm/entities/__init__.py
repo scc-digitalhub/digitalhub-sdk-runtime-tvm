@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from digitalhub.factory.plugins import CrudPlugin, EntityPlugin
+from digitalhub.plugins import CrudPlugin, EntityPlugin
 
 from digitalhub_runtime_tvm.entities.function.tvm.builder import FunctionTvmBuilder
 from digitalhub_runtime_tvm.entities.function.tvm.crud import new_function_tvm
@@ -21,18 +21,14 @@ from digitalhub_runtime_tvm.entities.task.build.builder import TaskTvmBuildBuild
 from digitalhub_runtime_tvm.entities.task.compile.builder import TaskTvmCompileBuilder
 from digitalhub_runtime_tvm.entities.task.serve.builder import TaskTvmServeBuilder
 
-try:
-    from digitalhub_runtime_tvm.runtimes.builder import RuntimeTvmBuilder
-except ImportError as e:
-    from digitalhub.utils.logger.logger import get_logger
-
-    get_logger(__name__).debug(f"Error importing runtime builder: {e}")
-    RuntimeTvmBuilder = None
+# Imported on first use: the entities register even when the runtime cannot be
+# imported, and the import error is reported when a run executes locally.
+RUNTIME_TVM_BUILDER = "digitalhub_runtime_tvm.runtimes.builder:RuntimeTvmBuilder"
 
 function_tvm_plugin = EntityPlugin(
     builder=FunctionTvmBuilder,
     shortcuts=(CrudPlugin(new_function_tvm),),
-    runtime_builder=RuntimeTvmBuilder,
+    runtime_builder=RUNTIME_TVM_BUILDER,
 )
 model_onnx_plugin = EntityPlugin(
     builder=ModelOnnxBuilder,
@@ -57,10 +53,10 @@ entity_plugins = (
     model_tvm_ir_plugin,
     model_tvm_so_plugin,
     function_tvm_plugin,
-    EntityPlugin(builder=TaskTvmBuildBuilder, runtime_builder=RuntimeTvmBuilder),
-    EntityPlugin(builder=TaskTvmCompileBuilder, runtime_builder=RuntimeTvmBuilder),
-    EntityPlugin(builder=TaskTvmServeBuilder, runtime_builder=RuntimeTvmBuilder),
-    EntityPlugin(builder=RunTvmRunBuildBuilder, runtime_builder=RuntimeTvmBuilder),
-    EntityPlugin(builder=RunTvmRunCompileBuilder, runtime_builder=RuntimeTvmBuilder),
-    EntityPlugin(builder=RunTvmRunServeBuilder, runtime_builder=RuntimeTvmBuilder),
+    EntityPlugin(builder=TaskTvmBuildBuilder, runtime_builder=RUNTIME_TVM_BUILDER),
+    EntityPlugin(builder=TaskTvmCompileBuilder, runtime_builder=RUNTIME_TVM_BUILDER),
+    EntityPlugin(builder=TaskTvmServeBuilder, runtime_builder=RUNTIME_TVM_BUILDER),
+    EntityPlugin(builder=RunTvmRunBuildBuilder, runtime_builder=RUNTIME_TVM_BUILDER),
+    EntityPlugin(builder=RunTvmRunCompileBuilder, runtime_builder=RUNTIME_TVM_BUILDER),
+    EntityPlugin(builder=RunTvmRunServeBuilder, runtime_builder=RUNTIME_TVM_BUILDER),
 )
