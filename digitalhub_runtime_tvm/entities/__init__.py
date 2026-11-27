@@ -7,6 +7,7 @@ from digitalhub.plugins import (
     BuilderDef,
     CrudPlugin,
     ExecFamily,
+    ExecutableActions,
     FunctionBuilder,
     ModelBuilder,
     ModelStatus,
@@ -55,7 +56,7 @@ tvm = ExecFamily(
         shortcuts=(CrudPlugin(new_function_tvm),),
     ),
     actions={
-        Actions.BUILD: Action(
+        ExecutableActions.BUILD: Action(
             task=BuilderDef(EntityKinds.TASK_TVM_BUILD, Task, TaskSpecTvmBuild, Status, base=TaskBuilder),
             run=BuilderDef(EntityKinds.RUN_TVM_BUILD, Run, RunSpecTvmRunBuild, RunStatus, base=RunBuilder),
         ),

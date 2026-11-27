@@ -30,6 +30,5 @@ class Actions(Enum):
     Task actions.
     """
 
-    BUILD = "build"
     COMPILE = "compile"
     SERVE = "serve"
