@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import typing
 
-from digitalhub.plugins import Function
+from digitalhub.plugins import ExecutableBuildMixin, Function
 
 if typing.TYPE_CHECKING:
     from digitalhub.plugins import Status
@@ -14,7 +14,7 @@ if typing.TYPE_CHECKING:
     from digitalhub_runtime_tvm.entities.function.tvm.spec import FunctionSpecTvm
 
 
-class FunctionTvm(Function):
+class FunctionTvm(ExecutableBuildMixin, Function):
     """
     FunctionTvm class.
     """
