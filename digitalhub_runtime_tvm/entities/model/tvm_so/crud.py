@@ -12,7 +12,7 @@ from digitalhub.utils.types import SourcesOrListOfSources
 from digitalhub_runtime_tvm.entities._commons.enums import EntityKinds
 
 if typing.TYPE_CHECKING:
-    from digitalhub_runtime_tvm.entities.model.tvm_so.entity import ModelTvmSo
+    from digitalhub.plugins import Model
 
 
 def log_tvm_so(
@@ -34,7 +34,7 @@ def log_tvm_so(
     opt_level: int | None = None,
     manifest: dict | None = None,
     **kwargs,
-) -> ModelTvmSo:
+) -> Model:
     """
     Create and upload a TVM SO model entity.
 
@@ -82,7 +82,7 @@ def log_tvm_so(
 
     Returns
     -------
-    ModelTvmSo
+    Model
         Created TVM SO model entity with uploaded files.
 
     Examples
@@ -151,7 +151,7 @@ def register_tvm_so(
     opt_level: int | None = None,
     manifest: dict | None = None,
     **kwargs,
-) -> ModelTvmSo:
+) -> Model:
     """
     Register a TVM SO model entity for an existing source.
 
@@ -201,7 +201,7 @@ def register_tvm_so(
 
     Returns
     -------
-    ModelTvmSo
+    Model
         Registered TVM SO model entity.
 
     Examples

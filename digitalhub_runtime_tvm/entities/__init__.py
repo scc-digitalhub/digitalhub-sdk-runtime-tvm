@@ -9,11 +9,13 @@ from digitalhub.plugins import (
     ExecFamily,
     ExecutableActions,
     FunctionBuilder,
+    Model,
     ModelBuilder,
     ModelStatus,
     Run,
     RunBuilder,
     RunStatus,
+    ServeRun,
     Status,
     Task,
     TaskBuilder,
@@ -24,20 +26,15 @@ from digitalhub_runtime_tvm.entities.function.tvm.crud import new_function_tvm
 from digitalhub_runtime_tvm.entities.function.tvm.entity import FunctionTvm
 from digitalhub_runtime_tvm.entities.function.tvm.spec import FunctionSpecTvm
 from digitalhub_runtime_tvm.entities.model.onnx.crud import log_onnx, register_onnx
-from digitalhub_runtime_tvm.entities.model.onnx.entity import ModelOnnx
 from digitalhub_runtime_tvm.entities.model.onnx.spec import ModelSpecOnnx
 from digitalhub_runtime_tvm.entities.model.tflite.crud import log_tflite, register_tflite
-from digitalhub_runtime_tvm.entities.model.tflite.entity import ModelTflite
 from digitalhub_runtime_tvm.entities.model.tflite.spec import ModelSpecTflite
 from digitalhub_runtime_tvm.entities.model.tvm_ir.crud import log_tvm_ir, register_tvm_ir
-from digitalhub_runtime_tvm.entities.model.tvm_ir.entity import ModelTvmIr
 from digitalhub_runtime_tvm.entities.model.tvm_ir.spec import ModelSpecTvmIr
 from digitalhub_runtime_tvm.entities.model.tvm_so.crud import log_tvm_so, register_tvm_so
-from digitalhub_runtime_tvm.entities.model.tvm_so.entity import ModelTvmSo
 from digitalhub_runtime_tvm.entities.model.tvm_so.spec import ModelSpecTvmSo
 from digitalhub_runtime_tvm.entities.run.build.spec import RunSpecTvmRunBuild
 from digitalhub_runtime_tvm.entities.run.compile.spec import RunSpecTvmRunCompile
-from digitalhub_runtime_tvm.entities.run.serve.entity import RunTvmRunServe
 from digitalhub_runtime_tvm.entities.run.serve.spec import RunSpecTvmRunServe
 from digitalhub_runtime_tvm.entities.task.build.spec import TaskSpecTvmBuild
 from digitalhub_runtime_tvm.entities.task.compile.spec import TaskSpecTvmCompile
@@ -67,7 +64,7 @@ tvm = ExecFamily(
         ),
         ExecutableActions.SERVE: Action(
             task=BuilderDef(EntityKinds.TASK_TVM_SERVE, Task, TaskSpecTvmServe, Status, base=TaskBuilder),
-            run=BuilderDef(EntityKinds.RUN_TVM_SERVE, RunTvmRunServe, RunSpecTvmRunServe, RunStatus, base=RunBuilder),
+            run=BuilderDef(EntityKinds.RUN_TVM_SERVE, ServeRun, RunSpecTvmRunServe, RunStatus, base=RunBuilder),
         ),
     },
     runtime_builder=RUNTIME_TVM_BUILDER,
@@ -76,7 +73,7 @@ tvm = ExecFamily(
 _models = (
     BuilderDef(
         EntityKinds.MODEL_ONNX,
-        ModelOnnx,
+        Model,
         ModelSpecOnnx,
         ModelStatus,
         base=ModelBuilder,
@@ -87,7 +84,7 @@ _models = (
     ),
     BuilderDef(
         EntityKinds.MODEL_TFLITE,
-        ModelTflite,
+        Model,
         ModelSpecTflite,
         ModelStatus,
         base=ModelBuilder,
@@ -98,7 +95,7 @@ _models = (
     ),
     BuilderDef(
         EntityKinds.MODEL_TVM_IR,
-        ModelTvmIr,
+        Model,
         ModelSpecTvmIr,
         ModelStatus,
         base=ModelBuilder,
@@ -109,7 +106,7 @@ _models = (
     ),
     BuilderDef(
         EntityKinds.MODEL_TVM_SO,
-        ModelTvmSo,
+        Model,
         ModelSpecTvmSo,
         ModelStatus,
         base=ModelBuilder,

@@ -12,7 +12,8 @@ from digitalhub.utils.types import SourcesOrListOfSources
 from digitalhub_runtime_tvm.entities._commons.enums import EntityKinds
 
 if typing.TYPE_CHECKING:
-    from digitalhub_runtime_tvm.entities.model.tvm_ir.entity import ModelTvmIr
+    from digitalhub.plugins import Model
+
     from digitalhub_runtime_tvm.entities.model.tvm_ir.spec import TvmSourceFormat
 
 
@@ -35,7 +36,7 @@ def log_tvm_ir(
     keep_params_in_input: bool | None = None,
     sanitize_input_names: bool | None = None,
     **kwargs,
-) -> ModelTvmIr:
+) -> Model:
     """
     Create and upload a TVM IR model entity.
 
@@ -84,7 +85,7 @@ def log_tvm_ir(
 
     Returns
     -------
-    ModelTvmIr
+    Model
         Created TVM IR model entity with uploaded files.
 
     Examples
@@ -146,7 +147,7 @@ def register_tvm_ir(
     keep_params_in_input: bool | None = None,
     sanitize_input_names: bool | None = None,
     **kwargs,
-) -> ModelTvmIr:
+) -> Model:
     """
     Register a TVM IR model entity for an existing source.
 
@@ -196,7 +197,7 @@ def register_tvm_ir(
 
     Returns
     -------
-    ModelTvmIr
+    Model
         Registered TVM IR model entity.
 
     Examples

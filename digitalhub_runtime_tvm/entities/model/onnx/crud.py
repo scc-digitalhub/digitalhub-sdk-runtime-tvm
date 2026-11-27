@@ -12,7 +12,7 @@ from digitalhub.utils.types import SourcesOrListOfSources
 from digitalhub_runtime_tvm.entities._commons.enums import EntityKinds
 
 if typing.TYPE_CHECKING:
-    from digitalhub_runtime_tvm.entities.model.onnx.entity import ModelOnnx
+    from digitalhub.plugins import Model
 
 
 def log_onnx(
@@ -31,7 +31,7 @@ def log_onnx(
     outputs: list[dict] | None = None,
     opset: int | None = None,
     **kwargs,
-) -> ModelOnnx:
+) -> Model:
     """
     Create and upload an ONNX model entity.
 
@@ -72,7 +72,7 @@ def log_onnx(
 
     Returns
     -------
-    ModelOnnx
+    Model
         Created ONNX model entity with uploaded files.
 
     Examples
@@ -127,7 +127,7 @@ def register_onnx(
     outputs: list[dict] | None = None,
     opset: int | None = None,
     **kwargs,
-) -> ModelOnnx:
+) -> Model:
     """
     Register an ONNX model entity for an existing source.
 
@@ -170,7 +170,7 @@ def register_onnx(
 
     Returns
     -------
-    ModelOnnx
+    Model
         Registered ONNX model entity.
 
     Examples

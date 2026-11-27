@@ -12,7 +12,7 @@ from digitalhub.utils.types import SourcesOrListOfSources
 from digitalhub_runtime_tvm.entities._commons.enums import EntityKinds
 
 if typing.TYPE_CHECKING:
-    from digitalhub_runtime_tvm.entities.model.tflite.entity import ModelTflite
+    from digitalhub.plugins import Model
 
 
 def log_tflite(
@@ -30,7 +30,7 @@ def log_tflite(
     inputs: list[dict] | None = None,
     outputs: list[dict] | None = None,
     **kwargs,
-) -> ModelTflite:
+) -> Model:
     """
     Create and upload a TFLite model entity.
 
@@ -69,7 +69,7 @@ def log_tflite(
 
     Returns
     -------
-    ModelTflite
+    Model
         Created TFLite model entity with uploaded files.
 
     Examples
@@ -121,7 +121,7 @@ def register_tflite(
     inputs: list[dict] | None = None,
     outputs: list[dict] | None = None,
     **kwargs,
-) -> ModelTflite:
+) -> Model:
     """
     Register a TFLite model entity for an existing source.
 
@@ -162,7 +162,7 @@ def register_tflite(
 
     Returns
     -------
-    ModelTflite
+    Model
         Registered TFLite model entity.
 
     Examples
