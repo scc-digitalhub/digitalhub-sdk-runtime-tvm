@@ -31,4 +31,3 @@ class Actions(Enum):
     """
 
     COMPILE = "compile"
-    SERVE = "serve"

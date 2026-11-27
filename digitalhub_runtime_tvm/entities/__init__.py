@@ -37,6 +37,7 @@ from digitalhub_runtime_tvm.entities.model.tvm_so.entity import ModelTvmSo
 from digitalhub_runtime_tvm.entities.model.tvm_so.spec import ModelSpecTvmSo
 from digitalhub_runtime_tvm.entities.run.build.spec import RunSpecTvmRunBuild
 from digitalhub_runtime_tvm.entities.run.compile.spec import RunSpecTvmRunCompile
+from digitalhub_runtime_tvm.entities.run.serve.entity import RunTvmRunServe
 from digitalhub_runtime_tvm.entities.run.serve.spec import RunSpecTvmRunServe
 from digitalhub_runtime_tvm.entities.task.build.spec import TaskSpecTvmBuild
 from digitalhub_runtime_tvm.entities.task.compile.spec import TaskSpecTvmCompile
@@ -64,9 +65,9 @@ tvm = ExecFamily(
             task=BuilderDef(EntityKinds.TASK_TVM_COMPILE, Task, TaskSpecTvmCompile, Status, base=TaskBuilder),
             run=BuilderDef(EntityKinds.RUN_TVM_COMPILE, Run, RunSpecTvmRunCompile, RunStatus, base=RunBuilder),
         ),
-        Actions.SERVE: Action(
+        ExecutableActions.SERVE: Action(
             task=BuilderDef(EntityKinds.TASK_TVM_SERVE, Task, TaskSpecTvmServe, Status, base=TaskBuilder),
-            run=BuilderDef(EntityKinds.RUN_TVM_SERVE, Run, RunSpecTvmRunServe, RunStatus, base=RunBuilder),
+            run=BuilderDef(EntityKinds.RUN_TVM_SERVE, RunTvmRunServe, RunSpecTvmRunServe, RunStatus, base=RunBuilder),
         ),
     },
     runtime_builder=RUNTIME_TVM_BUILDER,
