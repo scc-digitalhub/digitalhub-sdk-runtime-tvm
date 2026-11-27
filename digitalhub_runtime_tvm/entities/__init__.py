@@ -10,9 +10,11 @@ from digitalhub.plugins import (
     FunctionBuilder,
     ModelBuilder,
     ModelStatus,
+    Run,
     RunBuilder,
     RunStatus,
     Status,
+    Task,
     TaskBuilder,
 )
 
@@ -32,17 +34,11 @@ from digitalhub_runtime_tvm.entities.model.tvm_ir.spec import ModelSpecTvmIr
 from digitalhub_runtime_tvm.entities.model.tvm_so.crud import log_tvm_so, register_tvm_so
 from digitalhub_runtime_tvm.entities.model.tvm_so.entity import ModelTvmSo
 from digitalhub_runtime_tvm.entities.model.tvm_so.spec import ModelSpecTvmSo
-from digitalhub_runtime_tvm.entities.run.build.entity import RunTvmRunBuild
 from digitalhub_runtime_tvm.entities.run.build.spec import RunSpecTvmRunBuild
-from digitalhub_runtime_tvm.entities.run.compile.entity import RunTvmRunCompile
 from digitalhub_runtime_tvm.entities.run.compile.spec import RunSpecTvmRunCompile
-from digitalhub_runtime_tvm.entities.run.serve.entity import RunTvmRunServe
 from digitalhub_runtime_tvm.entities.run.serve.spec import RunSpecTvmRunServe
-from digitalhub_runtime_tvm.entities.task.build.entity import TaskTvmBuild
 from digitalhub_runtime_tvm.entities.task.build.spec import TaskSpecTvmBuild
-from digitalhub_runtime_tvm.entities.task.compile.entity import TaskTvmCompile
 from digitalhub_runtime_tvm.entities.task.compile.spec import TaskSpecTvmCompile
-from digitalhub_runtime_tvm.entities.task.serve.entity import TaskTvmServe
 from digitalhub_runtime_tvm.entities.task.serve.spec import TaskSpecTvmServe
 
 # Imported on first use: the entities register even when the runtime cannot be
@@ -60,18 +56,16 @@ tvm = ExecFamily(
     ),
     actions={
         Actions.BUILD: Action(
-            task=BuilderDef(EntityKinds.TASK_TVM_BUILD, TaskTvmBuild, TaskSpecTvmBuild, Status, base=TaskBuilder),
-            run=BuilderDef(EntityKinds.RUN_TVM_BUILD, RunTvmRunBuild, RunSpecTvmRunBuild, RunStatus, base=RunBuilder),
+            task=BuilderDef(EntityKinds.TASK_TVM_BUILD, Task, TaskSpecTvmBuild, Status, base=TaskBuilder),
+            run=BuilderDef(EntityKinds.RUN_TVM_BUILD, Run, RunSpecTvmRunBuild, RunStatus, base=RunBuilder),
         ),
         Actions.COMPILE: Action(
-            task=BuilderDef(EntityKinds.TASK_TVM_COMPILE, TaskTvmCompile, TaskSpecTvmCompile, Status, base=TaskBuilder),
-            run=BuilderDef(
-                EntityKinds.RUN_TVM_COMPILE, RunTvmRunCompile, RunSpecTvmRunCompile, RunStatus, base=RunBuilder
-            ),
+            task=BuilderDef(EntityKinds.TASK_TVM_COMPILE, Task, TaskSpecTvmCompile, Status, base=TaskBuilder),
+            run=BuilderDef(EntityKinds.RUN_TVM_COMPILE, Run, RunSpecTvmRunCompile, RunStatus, base=RunBuilder),
         ),
         Actions.SERVE: Action(
-            task=BuilderDef(EntityKinds.TASK_TVM_SERVE, TaskTvmServe, TaskSpecTvmServe, Status, base=TaskBuilder),
-            run=BuilderDef(EntityKinds.RUN_TVM_SERVE, RunTvmRunServe, RunSpecTvmRunServe, RunStatus, base=RunBuilder),
+            task=BuilderDef(EntityKinds.TASK_TVM_SERVE, Task, TaskSpecTvmServe, Status, base=TaskBuilder),
+            run=BuilderDef(EntityKinds.RUN_TVM_SERVE, Run, RunSpecTvmRunServe, RunStatus, base=RunBuilder),
         ),
     },
     runtime_builder=RUNTIME_TVM_BUILDER,
